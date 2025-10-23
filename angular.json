@@ -15,20 +15,19 @@
           "options": {
             "browser": "src/main.ts",
             "tsConfig": "tsconfig.app.json",
-            "assets": [
-              {
-                "glob": "**/*",
-                "input": "public"
-              }
-            ],
+           "assets": [
+               "src/assets",
+             "src/favicon.ico"
+               ],
             "styles": [
+              "src/custom-theme.scss",
               "src/styles.css"
-            ],
-            "server": "src/main.server.ts",
-            "outputMode": "server",
-            "ssr": {
-              "entry": "src/server.ts"
-            }
+            ]
+            ,
+             "polyfills": [
+              "zone.js" 
+            ]
+            
           },
           "configurations": {
             "production": {
@@ -73,18 +72,23 @@
           "builder": "@angular/build:karma",
           "options": {
             "tsConfig": "tsconfig.spec.json",
-            "assets": [
-              {
-                "glob": "**/*",
-                "input": "public"
-              }
-            ],
+           "assets": [
+            "src/assets",
+            "src/favicon.ico"
+               ],
             "styles": [
               "src/styles.css"
+            ],
+             "polyfills": [  
+              "zone.js/testing"
             ]
           }
         }
       }
     }
+  },
+  "cli": {
+    "analytics": "11aa8cde-cefc-4c38-902d-fe3da3a4afc3"
   }
+ 
 }

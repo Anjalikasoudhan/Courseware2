@@ -1,0 +1,224 @@
+@import url('https://fonts.googleapis.com/css2?family=Aladin&display=swap');
+
+body {
+    background-color: #fce2e5; /* Added background to match outer pink */
+}
+
+.register {
+    background: #fff;
+    margin: 2% auto;
+    border-radius: 15px;
+    padding: 3%;
+    box-shadow: 5px 5px 35px 8px rgba(147, 158, 147, 0.4); /* Softer shadow */
+    width: 65%; /* <-- CHANGED: Significantly narrower form width */
+    max-width: 900px; /* Max width to prevent it from getting too large on big screens */
+    min-width: 500px; /* Min width to prevent it from getting too small on small screens */
+}
+
+.register-right {
+    background: #fff;
+    border-radius: 15px;
+    padding: 3% 5%;
+}
+
+/* Tabs */
+.register .nav-tabs {
+    border: none;
+    background: #971515;
+    border-radius: 1.5rem;
+    width: 25%; /* <-- CHANGED: Narrower tab bar width */
+    margin: 0 auto 2% auto; /* Centered */
+    display: flex;
+    justify-content: center;
+    overflow: hidden; /* Ensure rounded corners are respected */
+}
+
+.register .nav-tabs .nav-item {
+    flex-grow: 1;
+}
+
+.register .nav-tabs .nav-link {
+    color: #fff;
+    font-weight: 600;
+    width: 100%;
+    text-align: center;
+    border: 2px solid transparent; 
+    cursor: pointer;
+    padding: 0.3rem 0.5rem; /* <-- CHANGED: Smaller padding for compact tabs */
+    transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out;
+    line-height: 1.5; /* Align text better */
+    height: 35px; /* <-- ADDED: Fixed height for the tabs */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.95rem; /* Slightly smaller font */
+}
+
+/* Ensure rounded corners for the entire tab bar */
+.register .nav-tabs .nav-item:first-child .nav-link {
+    border-top-left-radius: 1.5rem;
+    border-bottom-left-radius: 1.5rem;
+}
+
+.register .nav-tabs .nav-item:last-child .nav-link {
+    border-top-right-radius: 1.5rem;
+    border-bottom-right-radius: 1.5rem;
+}
+
+.register .nav-tabs .nav-link.active {
+    background-color: #f14747;
+    border-color: #440707; /* Active border color */
+    color: #fdfdfd;
+}
+
+.register-heading {
+    text-align: center;
+    font-weight: bold;
+    font-size: 35px;
+    letter-spacing: 1.5px;
+    margin-bottom: 3%;
+    font-family: 'Aladin', cursive;
+    color: #413613;
+}
+
+/* Two-column layout */
+.register-form {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.8rem 3rem; /* Adjusted gap for spacing */
+    margin-top: 1rem;
+}
+
+.form-group {
+    margin-bottom: 0.2rem; /* Reduced margin to match compact look */
+}
+
+/* Style inputs to match screenshot */
+input.form-control,
+select.form-control {
+    border-radius: 5px; 
+    border: 1px solid #ccc;
+    padding: 0.6rem 0.75rem; /* <-- CHANGED: Smaller vertical padding for inputs */
+    width: 100%;
+    height: 40px; /* <-- ADDED: Fixed height for inputs */
+    box-sizing: border-box; /* Include padding/border in height */
+}
+
+/* Style placeholder to act as label */
+::placeholder {
+    color: #555;
+    opacity: 1;
+}
+
+select.form-control:required:invalid {
+    color: #555;
+}
+
+option {
+    color: #000;
+}
+
+.form-text.text-muted {
+    color: #6c757d !important;
+    font-size: 0.75em; 
+    margin-top: 2px; /* Smaller margin above hint text */
+    display: block;
+}
+
+/* Button */
+.btnRegister {
+    grid-column: span 2; 
+    display: block;
+    margin: 2rem auto 0 auto; /* <-- Adjusted top margin to match screenshot */
+    border: 1px solid #440707;
+    color: #440707;
+    font-weight: 600;
+    font-size: 18px; /* Slightly smaller font for button */
+    width: 25%; /* <-- CHANGED: Wider button width */
+    min-width: 150px; /* Ensure button is not too small */
+    border-radius: 1.5rem;
+    padding: 0.6rem 1rem; /* <-- Adjusted button padding */
+    transition: 0.3s;
+    height: 45px; /* <-- ADDED: Fixed height for register button */
+    box-sizing: border-box;
+}
+
+.btnRegister:hover {
+    background: #440707;
+    color: #fff;
+}
+
+.btnRegister:disabled {
+    background: #eee;
+    color: #999;
+    border-color: #ccc;
+    cursor: not-allowed;
+}
+
+/* Checkbox and Already Account Link */
+.checkbox {
+    grid-column: 1 / 2;
+    text-align: left;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    padding-top: 5px; /* Align with "Already have an account?" */
+}
+
+.checkbox input {
+    margin-right: 8px;
+    height: auto; /* Override fixed input height for checkbox */
+    width: auto;
+}
+
+.already-account {
+    grid-column: 2 / 3;
+    text-align: right;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding-top: 5px; /* Align with checkbox */
+}
+
+.already-account .click-here {
+    color: navy;
+    font-weight: bold;
+    cursor: pointer;
+    margin-left: 5px;
+}
+
+.text-danger {
+    color: red !important;
+}
+
+/* Responsive adjustments for smaller screens if needed */
+@media (max-width: 768px) {
+    .register {
+        width: 95%;
+        padding: 5%;
+    }
+    .register .nav-tabs {
+        width: 50%; /* Make tabs wider on smaller screens */
+    }
+    .register-form {
+        grid-template-columns: 1fr; /* Stack columns on small screens */
+        gap: 0.5rem;
+    }
+    .btnRegister,
+    .checkbox,
+    .already-account {
+        grid-column: span 1; /* Adjust spanning for single column */
+        text-align: center;
+        justify-content: center;
+    }
+    .already-account {
+        margin-top: 1rem; /* Add some space if stacked */
+    }
+}
+.alert-danger {
+  color: #721c24;
+  background-color: #f8d7da;
+  border-color: #f5c6cb;
+  border-radius: 5px;
+}
