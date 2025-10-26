@@ -1,1 +1,49 @@
-<p>mycourses works!</p>
+<app-header></app-header>
+
+<div class="heading-text">
+  <b><i class="fa fa-graduation-cap"></i> My Learning</b>
+</div>
+
+<div class="course-carousel-container">
+  <owl-carousel-o [options]="owlOptions" (dragging)="owlDragging($event)">
+    <ng-template carouselSlide *ngFor="let enrollment of myenrollments$ | async">
+      <div class="card course-card">
+        <div class="card-body">
+          <img [src]="getCourseImage(enrollment.coursetype)" 
+               [alt]="enrollment.coursetype + ' course'" 
+               class="course-image">
+          
+          <hr>
+          
+          <h4 class="course-title">{{enrollment.coursename}}</h4>
+          
+          <div class="course-id">{{enrollment.courseid}}</div>
+          
+          <div class="course-detail">
+            <span class="detail-label">Date: </span>
+            <span class="detail-value">{{enrollment.enrolleddate}}</span>
+          </div>
+          
+          <div class="course-detail">
+            <span class="detail-label">Your ID: </span>
+            <span class="user-id-badge">{{enrollment.enrolleduserid}}</span>
+          </div>
+          
+          <!-- Other course details... -->
+          
+          <button (click)="visitCourse(enrollment.coursename)" 
+                  class="btn btn-primary" 
+                  [attr.aria-label]="'Visit ' + enrollment.coursename + ' course'">
+            Visit Course
+          </button>
+        </div>
+      </div>
+    </ng-template>
+  </owl-carousel-o>
+</div>
+
+<div *ngIf="(myenrollments$ | async)?.length === 0" class="no-courses-message">
+  <p>You haven't enrolled in any courses yet.</p>
+</div>
+
+<app-footer></app-footer>

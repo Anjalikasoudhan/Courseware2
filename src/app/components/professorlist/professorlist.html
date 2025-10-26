@@ -1,1 +1,44 @@
-<p>professorlist works!</p>
+<app-header></app-header>
+
+<div class="heading-text"><b>Professor List</b></div>
+<div class="row">
+  @if (professorlist(); as professorData) {
+    @for (professor of professorData | async; track professor.professorid) {
+      <div class="col-4 card" id="bloodCards">
+        <div class="img-block">
+          <div class="circle">
+            @if (professor.gender === 'Male' || professor.gender === 'male') {
+              <img class="bloodimg" [src]="'assets/img/maleprofessor.png'" width="120" height="120" alt="Male Professor">
+            }
+            @if (professor.gender === 'Female' || professor.gender === 'female') {
+              <img class="bloodimg" [src]="'assets/img/femaleprofessor.png'" width="120" height="120" alt="Female Professor">
+            }
+          </div>
+        </div>
+        <div class="card-block">
+          <div class="text"><b style="color: darkblue">Professor ID : </b><b style="color: darkred;"><small class="date-cover">{{professor.professorid}}</small></b></div>
+          <div class="text"><b style="color: darkblue">Professor Name : </b><b style="color: darkred;"> {{professor.professorname}} </b></div>
+          <div class="text"><b style="color: darkblue">Degree Completed : </b><b style="color: darkred;"> {{professor.degreecompleted}} </b></div>
+          <div class="text"><b style="color: darkblue">Email : </b><b style="color: darkred;"> {{professor.email}} </b></div>
+          <div class="text"><b style="color: darkblue">Institution Name : </b><b style="color: darkred;"> {{professor.institutionname}} </b></div>
+          <div class="text"><b style="color: darkblue">Department : </b><b style="color: darkred;"> {{professor.department}} </b></div>
+          <div class="text"><b style="color: darkblue">Experience: </b><b style="color: darkred;"> {{professor.experience}} years </b></div>
+          <div class="text"><b style="color: darkblue">Gender : </b><b style="color: darkred;"> {{professor.gender}} </b></div>
+          <div class="text"><b style="color: darkblue">Mobile : </b><b style="color: darkred;"> {{professor.mobile}} </b></div>
+          
+          @if (professor.status === 'accept') {
+            <div class="status-btn">Approved Professor</div>
+          }
+          @if (professor.status === 'reject') {
+            <div class="status-btn2">Rejected</div>
+          }
+          @if (professor.status === 'Pending'||professor.status=='false') {
+            <div class="status-btn1">Approval Pending</div>
+          }
+        </div>
+      </div>
+    }
+  }
+</div>
+<br><br><br>
+<app-footer></app-footer>

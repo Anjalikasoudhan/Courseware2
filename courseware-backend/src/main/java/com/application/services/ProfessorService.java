@@ -17,6 +17,11 @@ public class ProfessorService
 		return professorRepo.save(professor);
 	}
 	
+	public long getTotalProfessorsCount() {
+        return professorRepo.count();
+    }
+	
+	
 	public Professor addNewProfessor(Professor professor)
 	{
 		return professorRepo.save(professor);

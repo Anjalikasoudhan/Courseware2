@@ -1,1 +1,162 @@
-<p>userprofile works!</p>
+<app-header></app-header>
+
+<!-- Debug Info (remove in production) -->
+<div style="background: #f8f9fa; padding: 10px; margin: 10px; border-radius: 5px;">
+  <small>Debug: User: {{loggedUser}} | Profile View: {{profileView}} | Has User Data: {{!!user.username}}</small>
+</div>
+
+@if (profileView && user.username) {
+<div class="row justify-content-center">
+  <div id="bloodCards">
+    @if (user.gender.toLowerCase() === 'male') {
+      <img class="bloodimg" src="assets/img/maleuser.png" width="140" height="140" alt="Male User">
+    }
+    @if (user.gender.toLowerCase() === 'female') {
+      <img class="bloodimg" src="assets/img/femaleuser.png" width="140" height="140" alt="Female User">
+    }
+
+    <div class="card-block">
+      <div class="text"><b class="element"> {{user.username}}</b> </div>
+      <div class="text">
+        <small class="id-badge">{{user.userid}}</small>
+      </div>
+      <div class="text"><b class="element"> {{user.mobile}}</b> </div>
+      <div class="text"><b class="element"> {{user.gender}}</b> </div>
+      <div class="text"><b class="element"> {{user.profession}}</b> </div>
+      <div class="text"><b class="element"> {{user.email}}</b> </div>
+
+      <div class="btndiv">
+        <button class="editbtn" (click)="editProfile()">
+          <i class="fa fa-edit"></i> Edit
+        </button>
+      </div>
+
+      @if (profileUpdated) {
+        <small class="success-msg">
+          Profile Updated Successfully !!!
+        </small>
+      }
+    </div>
+  </div>
+</div>
+}
+
+@if (!user.username && !msg) {
+  <div class="text-center">
+    <p>No profile data available</p>
+  </div>
+}
+
+@if (!profileView) {
+<div class="container register" id="profileform">
+  <div class="row">
+    <div class="col-md-9 register-right">
+      <h3 class="textual">Update User Profile</h3>
+      
+      @if (!profileUpdated) {
+        <small class="info-msg">Dear {{loggedUser}}, update your profile here</small>
+      }
+
+      @if (msg) {
+        <div class="alert alert-danger text-center">{{msg}}</div>
+      }
+
+      <form #Updateform="ngForm" (ngSubmit)="updateUserProfile(Updateform)" class="register-form">
+        <div class="row">
+          <div class="col-md-6">
+            <div class="form-group">
+              <input type="text" class="form-control" placeholder="Username *" name="username"
+                     [(ngModel)]="user.username" required #username="ngModel"
+                     [class.is-invalid]="username.invalid && username.touched">
+              @if (username.invalid && username.touched) {
+                <small class="text-danger">required field</small>
+              }
+            </div>
+
+            <div class="form-group">
+              <input type="text" class="form-control" placeholder="Gender *" name="usergender"
+                     [(ngModel)]="user.gender" required #usergender="ngModel"
+                     [class.is-invalid]="usergender.invalid && usergender.touched">
+              @if (usergender.invalid && usergender.touched) {
+                <small class="text-danger">required field</small>
+              }
+            </div>
+
+            <div class="form-group">
+              <input type="text" class="form-control" placeholder="Profession *" name="userprofession"
+                     [(ngModel)]="user.profession" required #userprofession="ngModel"
+                     [class.is-invalid]="userprofession.invalid && userprofession.touched">
+              @if (userprofession.invalid && userprofession.touched) {
+                <small class="text-danger">required field</small>
+              }
+            </div>
+
+            <div class="form-group">
+              <input type="password" class="form-control" placeholder="Password *" name="pwd"
+                     [(ngModel)]="user.password" required #userpassword="ngModel"
+                     [class.is-invalid]="userpassword.invalid && userpassword.touched">
+              <small style="color: gray; font-size: 10px;">Password must have uppercase, lowercase, digit, special char, 6-20 length</small>
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <div class="form-group">
+              <input type="email" class="form-control" placeholder="Email *" name="useremail"
+                     [(ngModel)]="user.email" required pattern="^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+$"
+                     #useremail="ngModel"
+                     [class.is-invalid]="useremail.invalid && useremail.touched">
+              @if (useremail.errors && useremail.touched) {
+                @if (useremail.errors['required']) {
+                  <small class="text-danger">required field</small>
+                }
+                @if (useremail.errors['pattern']) {
+                  <small class="text-danger">Invalid email</small>
+                }
+              }
+            </div>
+
+            <div class="form-group">
+              <input type="tel" maxlength="10" minlength="10" class="form-control" placeholder="Mobile *" name="usermobile"
+                     [(ngModel)]="user.mobile" required #usermobile="ngModel"
+                     [class.is-invalid]="usermobile.invalid && usermobile.touched">
+              @if (usermobile.invalid && usermobile.touched) {
+                <small class="text-danger">required field</small>
+              }
+            </div>
+
+            <div class="form-group">
+              <input type="text" class="form-control" placeholder="Address *" name="useraddress"
+                     [(ngModel)]="user.address" required #useraddress="ngModel"
+                     [class.is-invalid]="useraddress.invalid && useraddress.touched">
+              @if (useraddress.invalid && useraddress.touched) {
+                <small class="text-danger">required field</small>
+              }
+            </div>
+
+            <div class="form-group">
+              <input type="password" class="form-control" placeholder="Confirm Password *" name="ConfirmPassword"
+                     [(ngModel)]="confirmPassword" required #userconfirmPassword="ngModel"
+                     [class.is-invalid]="userconfirmPassword.invalid && userconfirmPassword.touched">
+              @if (confirmPassword !== user.password && userconfirmPassword.touched) {
+                <small class="text-danger">password not matched</small>
+              }
+            </div>
+          </div>
+        </div>
+
+        <div class="btndiv">
+          <button type="submit" class="registerbtn"
+                  [disabled]="Updateform.invalid || confirmPassword !== user.password">
+            Update
+          </button>
+          <button type="button" class="registerbtn btn-outline" (click)="cancelEdit()">
+            Cancel
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+}
+
+<app-footer></app-footer>

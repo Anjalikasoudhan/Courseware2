@@ -28,6 +28,10 @@ public class UserService
 		return (List<User>)userRepo.findAll();
 	}
 	
+	public long getTotalUsersCount() {
+		return userRepo.count();
+	}
+	
 	public User fetchUserByEmail(String email)
 	{
 		return userRepo.findByEmail(email);

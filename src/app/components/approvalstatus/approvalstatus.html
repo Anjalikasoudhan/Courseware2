@@ -1,1 +1,225 @@
-<p>approvalstatus works!</p>
+<app-header></app-header>
+
+@if (showProfessorApproval()) {
+<div class="panel panel-primary" id="professorapproval">
+  <div class="panel-heading">
+    <h2
+      style="text-align: center; font-family: 'Oswald', sans-serif; color: maroon; margin-top: 3%; margin-bottom: 4%;">
+      Your Approval Status
+      @for (professor of approval() | async; track professor.email) {
+      @if (professor.status === 'accept') {
+      <h2 style="margin-top: 1%;">
+        <small style="color: green;">
+          (Verified & Accepted)
+          ID : <small class="date-cover">{{ professor.professorid }}</small>
+        </small>
+      </h2>
+      }
+      @if (professor.status === 'false') {
+      <h2 style="margin-top: 1%;">
+        <small style="color: rgb(161, 106, 34);">(Not yet Verified)</small>
+      </h2>
+      }
+      @if (professor.status === 'reject') {
+      <h2 style="margin-top: 1%;">
+        <small style="color: rgb(184, 36, 36);">(Verified & Rejected)</small>
+      </h2>
+      }
+      }
+    </h2>
+  </div>
+
+  <div class="panel-body">
+    <table class="table table-bordered table-striped">
+      <thead class="headercolor">
+        <tr>
+          <th>Identity</th>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Degree</th>
+          <th>Experience</th>
+          <th>Institution</th>
+          <th>Department</th>
+          <th>Mobile</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (professor of approval() | async; track professor.email) {
+        <tr>
+          <td>
+            @if (professor.gender === 'Male' || professor.gender === 'male') {
+            <img class="bloodimg" [src]="'assets/img/maleprofessor.png'" width="80" height="80">
+            }
+            @if (professor.gender === 'Female' || professor.gender === 'female') {
+            <img class="bloodimg" [src]="'assets/img/femaleprofessor.png'" width="80" height="80">
+            }
+          </td>
+          <td>{{ professor.professorname }}</td>
+          <td>{{ professor.email }}</td>
+          <td>{{ professor.degreecompleted }}</td>
+          <td>{{ professor.experience }} years</td>
+          <td>{{ professor.institutionname }}</td>
+          <td>{{ professor.department }}</td>
+          <td>{{ professor.mobile }}</td>
+          <td>
+            @if ((currRole() === 'professor' || currRole() === 'PROFESSOR') && professor.email === loggedUser()) {
+            @if (professor.status === 'accept') {
+            <div class="accepted">Accepted</div>
+            }
+            @if (professor.status === 'false' || professor.status === 'Pending') {
+            <div class="pending">Pending</div>
+            }
+            @if (professor.status === 'reject') {
+            <div class="rejected">Rejected</div>
+            }
+            }
+          </td>
+        </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</div>
+}
+
+@if (showAdminApproval()) {
+<div class="panel panel-primary" id="adminapproval">
+  <div class="panel-heading">
+    <h2
+      style="text-align: center; font-family: 'Oswald', sans-serif; color: darkgreen; margin-top: 3%; margin-bottom: 3%;">
+      Approve Professor Here
+    </h2>
+  </div>
+
+  <div class="panel-body">
+    <table class="table table-bordered table-striped">
+      <thead>
+        <tr>
+          <th>Identity</th>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Degree</th>
+          <th>Experience</th>
+          <th>Institution</th>
+          <th>Department</th>
+          <th>Mobile</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (professor of professorlist() | async; track professor.email) {
+        <tr>
+          <td>
+            @if (professor.gender === 'Male' || professor.gender === 'male') {
+            <img class="bloodimg" [src]="'assets/img/maleprofessor.png'" width="80" height="80">
+            }
+            @if (professor.gender === 'Female' || professor.gender === 'female') {
+            <img class="bloodimg" [src]="'assets/img/femaleprofessor.png'" width="80" height="80">
+            }
+          </td>
+          <td>{{ professor.professorname }}</td>
+          <td>{{ professor.email }}</td>
+          <td>{{ professor.degreecompleted }}</td>
+          <td>{{ professor.experience }} years</td>
+          <td>{{ professor.institutionname }}</td>
+          <td>{{ professor.department }}</td>
+          <td>{{ professor.mobile }}</td>
+          <td>
+            @if (loggedUser() === 'admin@gmail.com' && (professor.status === 'false' || professor.status ===
+            'Pending' || professor.status === null)) {
+            <div class="button-group">
+              <button (click)="acceptRequest(professor.email)" id="acceptbtn" class="btn-accept">
+                ✅ Accept
+              </button>
+              <button (click)="rejectRequest(professor.email)" id="rejectbtn" class="btn-reject">
+                ❌ Reject
+              </button>
+            </div>
+            }
+            @if (loggedUser() === 'admin@gmail.com' && professor.status === 'accept') {
+            <div class="accepted">Accepted</div>
+            }
+            @if (loggedUser() === 'admin@gmail.com' && professor.status === 'reject') {
+            <div class="rejected">Rejected</div>
+            }
+          </td>
+        </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</div>
+}
+
+<br><br><br>
+<app-footer></app-footer>
+
+<style>
+  /* ✅ Button styling */
+  .button-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .btn-accept {
+    background-color: #28a745;
+    color: white;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    width: 100px;
+    transition: 0.2s ease-in-out;
+  }
+
+  .btn-accept:hover {
+    background-color: #218838;
+    transform: scale(1.05);
+  }
+
+  .btn-reject {
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    width: 100px;
+    transition: 0.2s ease-in-out;
+  }
+
+  .btn-reject:hover {
+    background-color: #c82333;
+    transform: scale(1.05);
+  }
+
+  /* ✅ Table style polish */
+  .table {
+    border-collapse: collapse;
+    text-align: center;
+  }
+
+  .table th {
+    background-color: #f3f3f3;
+  }
+
+  .accepted {
+    color: green;
+    font-weight: bold;
+  }
+
+  .pending {
+    color: orange;
+    font-weight: bold;
+  }
+
+  .rejected {
+    color: red;
+    font-weight: bold;
+  }
+</style>

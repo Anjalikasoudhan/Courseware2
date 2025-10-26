@@ -17,6 +17,13 @@ public class ChapterService
 		return chapterRepo.save(chapter);
 	}
 	
+	
+	public long getTotalChaptersCount() {
+        return chapterRepo.count();
+    }
+	
+	
+	
 	public Chapter addNewChapter(Chapter chapter)
 	{
 		return chapterRepo.save(chapter);

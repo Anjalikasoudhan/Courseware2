@@ -1,4 +1,5 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, OnInit, signal, ViewChild } from '@angular/core'; // Import ViewChild
+import { NgForm } from '@angular/forms'; // Import NgForm
 import { Router, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -16,35 +17,60 @@ import { ProfessorService } from '../../services/professor.service';
 })
 export class Registration implements OnInit {
 
-  // These objects will automatically get the new properties
-  // from ngModel in the HTML
+  // Get references to the forms in the HTML
+  @ViewChild('userForm') userForm!: NgForm;
+  @ViewChild('professorForm') professorForm!: NgForm;
+
   user = new User();
   professor = new Professor();
   msg = '';
+  agreementChecked: boolean = false;
+  boxchecked: boolean = false;
 
-  // Signal to track active tab
   activeTab = signal<'user' | 'professor'>('user');
 
   constructor(
     private _registrationService: RegistrationService,
     private _professorService: ProfessorService,
-    public _router: Router // Make public to access in template
+    public _router: Router
   ) { }
 
   ngOnInit(): void {
     // Set default values for dropdowns
     (this.user as any).gender = "";
     (this.user as any).profession = "";
-    (this.professor as any).gender = ""; // Keep this for professor
+    (this.professor as any).gender = "";
   }
 
-  // Tab switching methods
+  // --- TAB SWITCHING METHODS (WITH FORM RESETS) ---
+
   switchToUserTab(): void {
     this.activeTab.set('user');
+    this.msg = ''; // Clear any old error messages
+    
+    // Reset the professor object to clear the other form
+    this.professor = new Professor();
+    (this.professor as any).gender = ""; // Reset default
+    
+    // Reset the professor form's validation state
+    if (this.professorForm) {
+      this.professorForm.resetForm({ gender: "" }); // Reset with default
+    }
   }
 
   switchToProfessorTab(): void {
     this.activeTab.set('professor');
+    this.msg = ''; // Clear any old error messages
+    
+    // Reset the user object to clear the other form
+    this.user = new User();
+    (this.user as any).gender = ""; // Reset default
+    (this.user as any).profession = ""; // Reset default
+
+    // Reset the user form's validation state
+    if (this.userForm) {
+      this.userForm.resetForm({ gender: "", profession: "" }); // Reset with defaults
+    }
   }
 
   // Helper methods for template
@@ -56,10 +82,26 @@ export class Registration implements OnInit {
     return this.activeTab() === 'professor';
   }
 
-  // Registration methods
+  // --- REGISTRATION METHODS (WITH VALIDATION) ---
+
   registerUser(): void {
-    // The 'this.user' object will contain all fields
-    // from the user form
+    this.msg = ''; // Clear any previous errors
+
+    // 1. Check for password mismatch
+    if (this.user.password !== this.user.confirmPassword) {
+      this.msg = "Passwords do not match!";
+      return; // Stop execution
+    }
+
+    // 2. Check if form is valid (including the checkbox)
+    if (!this.userForm.valid) {
+      this.msg = "Please fill all required fields and agree to the terms.";
+      // This will trigger your @if messages in the HTML
+      this.userForm.control.markAllAsTouched();
+      return; // Stop execution
+    }
+
+    // If code reaches here, the form is valid and passwords match
     this._registrationService.registerUser(this.user).subscribe({
       next: (data: User) => {
         console.log("User Registration Success");
@@ -70,15 +112,28 @@ export class Registration implements OnInit {
       error: (error: any) => {
         console.log("User Registration Failed", error.error);
         this.msg = "User with " + this.user.email + " already exists!";
-        
       }
     });
   }
 
   registerProfessor(): void {
-    // The 'this.professor' object will now contain all the new fields:
-    // professorname, email, gender, mobile, password,
-    // institutionName, department, experience, degrees
+    this.msg = ''; // Clear any previous errors
+
+    // 1. Check for password mismatch
+    if (this.professor.password !== this.professor.confirmPassword) {
+      this.msg = "Passwords do not match!";
+      return; // Stop execution
+    }
+
+    // 2. Check if form is valid (including the checkbox)
+    if (!this.professorForm.valid) {
+      this.msg = "Please fill all required fields and agree to the terms.";
+      // This will trigger your @if messages in the HTML
+      this.professorForm.control.markAllAsTouched();
+      return; // Stop execution
+    }
+
+    // If code reaches here, the form is valid and passwords match
     this._registrationService.registerProfessor(this.professor).subscribe({
       next: (data: Professor) => {
         console.log("Professor Registration Success");
@@ -89,9 +144,7 @@ export class Registration implements OnInit {
       error: (error: any) => {
         console.log("Professor Registration Failed", error.error);
         this.msg = "Professor with " + this.professor.email + " already exists!";
-         
       }
     });
   }
-
 }

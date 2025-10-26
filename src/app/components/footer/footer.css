@@ -1,4 +1,115 @@
-#footercontent{
+
+@import url('https://fonts.googleapis.com/css2?family=Aladin&family=Merienda+One&family=Staatliches&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Mate+SC&display=swap');
+
+#footercontent {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: #851313;
+    font-weight: bolder;
+    color: white;
+}
+
+.btn-floating {
+    border: none !important;
+    border-radius: 50%;
+    width: 44px;
+    height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+.mb-4{
     display: flex;
     justify-content: center;
+    align-items: center;
+    gap:10px;
+}
+.btn-floating:hover {
+    transform: scale(1.1);
+    opacity: 0.9;
+}
+
+.btn-floating i {
+    font-size: 18px;
+}
+
+/* Social media brand colors */
+.facebook {
+    background-color: #3b5998 !important;
+}
+
+.twitter {
+    background-color: #55acee !important;
+}
+
+.telegram {
+    background-color: #1d6a9e !important;
+}
+
+.google {
+    background-color: #dd4b39 !important;
+}
+
+.linkedin {
+    background-color: #0082ca !important;
+}
+
+.pinterest {
+    background-color: #bd081c !important;
+}
+
+.whatsapp {
+    background-color: #25d366 !important;
+}
+
+.youtube {
+    background-color: #ff0000 !important;
+}
+
+.github {
+    background-color: #333333 !important;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .btn-floating {
+        width: 40px;
+        height: 40px;
+        margin: 0.25rem !important;
+    }
+    
+    .btn-floating i {
+        font-size: 16px;
+    }
+    
+    #footercontent {
+        padding: 1.5rem 1rem !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .btn-floating {
+        width: 36px;
+        height: 36px;
+        margin: 0.2rem !important;
+    }
+    
+    .btn-floating i {
+        font-size: 14px;
+    }
+    
+    #footercontent {
+        padding: 1rem 0.5rem !important;
+    }
+    
+    section.mb-4 {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 0.25rem;
+    }
 }

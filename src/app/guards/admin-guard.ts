@@ -6,10 +6,21 @@ export const adminGuard: CanActivateFn = (route, state) => {
   const router = inject(Router);
   const loginService = inject(LoginService);
 
-  if (loginService.isAdminLoggedIn()) {
-    return true;
-  }
+  console.log('🛡️ Admin Guard triggered for route:', route.url);
+  console.log('Current sessionStorage:', {
+    USER: sessionStorage.getItem('USER'),
+    ROLE: sessionStorage.getItem('ROLE'),
+    TOKEN: sessionStorage.getItem('TOKEN')
+  });
+
+  const isAdmin = loginService.isAdminLoggedIn();
   
-  router.navigate(['login']);
-  return false;
+  if (isAdmin) {
+    console.log('✅ Admin Guard: Access granted');
+    return true;
+  } else {
+    console.log('❌ Admin Guard: Access denied - redirecting to login');
+    router.navigate(['login']);
+    return false;
+  }
 };

@@ -3,6 +3,7 @@ import { authGuard } from './guards/auth-guard';
 import { adminGuard } from './guards/admin-guard';
 import { professorGuard } from './guards/professor-guard';
 import { userGuard } from './guards/user-guard';
+import { multiRoleGuard } from './guards/multi-role-guard';
 
 export const routes: Routes = [
   // Public routes
@@ -37,17 +38,17 @@ export const routes: Routes = [
   { 
     path: 'userlist', 
     loadComponent: () => import('./components/userlist/userlist').then(c => c.Userlist), 
-    canActivate: [adminGuard] 
+    canActivate: [multiRoleGuard(['ADMIN', 'PROFESSOR','USER'])]
   },
   { 
     path: 'professorlist', 
     loadComponent: () => import('./components/professorlist/professorlist').then(c => c.Professorlist), 
-    canActivate: [adminGuard] 
+    canActivate:  [multiRoleGuard(['ADMIN', 'PROFESSOR','USER'])]
   },
   { 
     path: 'approveprofessor', 
     loadComponent: () => import('./components/approvalstatus/approvalstatus').then(c => c.Approvalstatus), 
-    canActivate: [adminGuard] 
+    canActivate: [multiRoleGuard(['ADMIN','PROFESSOR'])]
   },
   
   // User routes
@@ -74,12 +75,12 @@ export const routes: Routes = [
   { 
     path: 'courselist', 
     loadComponent: () => import('./components/courselist/courselist').then(c => c.Courselist), 
-    canActivate: [userGuard] 
+    canActivate: [multiRoleGuard(['ADMIN', 'PROFESSOR','USER'])]
   },
   { 
     path: 'fullcourse/:coursename', 
     loadComponent: () => import('./components/fullcourse/fullcourse').then(c => c.Fullcourse), 
-    canActivate: [userGuard] 
+    canActivate: [multiRoleGuard(['ADMIN', 'PROFESSOR','USER'])] 
   },
   
   // Professor routes
@@ -96,17 +97,17 @@ export const routes: Routes = [
   { 
     path: 'addcourse', 
     loadComponent: () => import('./components/addcourse/addcourse').then(c => c.Addcourse), 
-    canActivate: [professorGuard] 
+    canActivate:[multiRoleGuard(['ADMIN', 'PROFESSOR'])] 
   },
   { 
     path: 'addchapter', 
     loadComponent: () => import('./components/addchapter/addchapter').then(c => c.Addchapter), 
-    canActivate: [professorGuard] 
+    canActivate: [multiRoleGuard(['ADMIN', 'PROFESSOR'])] 
   },
   { 
     path: 'courselist', 
     loadComponent: () => import('./components/courselist/courselist').then(c => c.Courselist), 
-    canActivate: [professorGuard] 
+    canActivate: [multiRoleGuard(['ADMIN', 'PROFESSOR','USER'])] 
   },
   
   // Routes that require any authentication (authGuard)

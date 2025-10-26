@@ -1,0 +1,192 @@
+@import url('https://fonts.googleapis.com/css2?family=Aladin&family=Merienda+One&family=Staatliches&display=swap');
+
+.row {
+  margin-left: 10%;
+  margin-top: 3%;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+#bloodCards {
+  margin-right: 5%;
+  margin-bottom: 4%;
+  width: 40%;
+  border-radius: 15px;
+  padding: 0px;
+  transition: transform .2s;
+  box-shadow: 5px 5px 25px 8px rgb(147, 158, 147);
+  background-color: white;
+  overflow: hidden;
+  position: relative;
+}
+
+#bloodCards:hover {
+  transform: scale(1.05);
+  cursor: pointer;
+}
+
+.card-block {
+  margin-top: -33%;
+  margin-left: 40%;
+  margin-bottom: 6%;
+  padding: 10px;
+}
+
+.text {
+  font-family: serif;
+  font-size: larger;
+  font-weight: bolder;
+  margin-bottom: 8px;
+  line-height: 1.3;
+}
+
+#searchtxt {
+  width: 20%;
+  float: right;
+}
+
+.img-block {
+  width: 40%;
+  height: 180px;
+  border-radius: 15px;
+  background-color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.circle {
+  background-color: rgb(22, 121, 72);
+  border-radius: 50%;
+  width: 120px;
+  height: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.bloodimg {
+  border-radius: 50%;
+}
+
+.heading-text {
+  font-weight: bolder;
+  font-size: 40px;
+  margin-top: 1%;
+  color: darkgreen;
+  font-family: 'Aladin', cursive;
+  letter-spacing: 1px;
+  margin-left: 45%;
+  text-align: center;
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+  .row {
+    margin-left: 5%;
+    margin-right: 5%;
+  }
+  
+  #bloodCards {
+    width: 45%;
+  }
+}
+
+@media (max-width: 992px) {
+  .row {
+    margin-left: 3%;
+    margin-right: 3%;
+  }
+  
+  #bloodCards {
+    width: 47%;
+  }
+  
+  .card-block {
+    margin-left: 45%;
+  }
+}
+
+@media (max-width: 768px) {
+  .row {
+    margin-left: 2%;
+    margin-right: 2%;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  #bloodCards {
+    width: 90%;
+    margin-right: 0;
+  }
+  
+  .heading-text {
+    margin-left: 0;
+    font-size: 32px;
+  }
+  
+  .card-block {
+    margin-left: 45%;
+    margin-top: -35%;
+  }
+  
+  .img-block {
+    width: 35%;
+  }
+}
+
+@media (max-width: 576px) {
+  .heading-text {
+    font-size: 28px;
+  }
+  
+  .card-block {
+    margin-left: 50%;
+    margin-top: -40%;
+  }
+  
+  .text {
+    font-size: medium;
+  }
+  
+  .circle {
+    width: 100px;
+    height: 100px;
+  }
+  
+  .bloodimg {
+    width: 80px;
+    height: 80px;
+  }
+  
+  .img-block {
+    width: 40%;
+    height: 160px;
+  }
+}
+
+@media (max-width: 480px) {
+  .card-block {
+    margin-left: 55%;
+    margin-top: -45%;
+  }
+  
+  .text {
+    font-size: small;
+  }
+  
+  .circle {
+    width: 80px;
+    height: 80px;
+  }
+  
+  .bloodimg {
+    width: 60px;
+    height: 60px;
+  }
+  
+  .img-block {
+    height: 140px;
+  }
+}

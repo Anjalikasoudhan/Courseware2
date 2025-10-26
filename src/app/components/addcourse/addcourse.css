@@ -1,0 +1,80 @@
+@import url('https://fonts.googleapis.com/css2?family=Aladin&family=Merienda+One&family=Staatliches&display=swap');
+
+.register {
+    /* Use padding instead of margin for better spacing */
+    padding: 3rem 0;
+}
+
+.register-right {
+    background: #ffffff;
+    border-radius: 15px;
+    box-shadow: 5px 5px 35px 8px rgb(147 158 147 / 30%); /* Softened the shadow */
+    /* 'mx-auto' in the HTML handles the centering */
+}
+
+.register-heading {
+    text-align: center;
+    font-weight: bold;
+    font-size: 35px;
+    letter-spacing: 1.5px;
+    font-family: 'Aladin', cursive;
+    color: #413613;
+    
+    /* Use padding and margin for spacing, not negative margin */
+    padding-top: 3rem;
+    margin-bottom: 2rem;
+}
+
+.register .register-form {
+    /* Reduced padding to match Image 1 */
+    padding: 0 3rem;
+}
+
+label {
+    margin-bottom: 0.5rem; /* Standard Bootstrap margin */
+    font-family: 'Merienda';
+    font-weight: 600;
+}
+
+.form-group {
+    margin-bottom: 1.5rem; /* Spacing between form fields */
+}
+
+/* This styles all inputs, selects, and textareas with the form-control class
+  to have the rounded corners from Image 1.
+*/
+.form-control {
+    border-radius: 8px;
+    padding: 0.75rem; /* Makes inputs a little taller */
+}
+
+.btnRegister {
+    /* Removed float, margin-right, and width to allow centering */
+    border: none;
+    border-radius: 1.5rem;
+    padding: 12px 35px; /* Gave it specific padding */
+    border: 1px solid #440707;
+    color: #440707;
+    background-color: #fff;
+    font-weight: 600;
+    font-size: 18px; /* Slightly smaller font */
+    cursor: pointer;
+    transition: all 0.3s ease; /* Added smooth hover transition */
+}
+
+.btnRegister:hover {
+    background: #440707;
+    color: #fff;
+}
+
+/* Styles for the date picker placeholder */
+input[type="date"]::placeholder {
+  color: #6c757d; /* Default placeholder color */
+}
+input[type="date"] {
+  color: #6c757d;
+}
+input[type="date"]:focus,
+input[type="date"]:valid {
+  color: #212529; /* Black text when focused or valid */
+}

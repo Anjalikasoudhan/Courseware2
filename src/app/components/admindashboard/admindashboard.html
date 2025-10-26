@@ -1,47 +1,116 @@
 <app-header></app-header>
-<div class="container">
-  <div class="row">
-    <div style="color: maroon; font-weight: bolder; font-family: aladin; letter-spacing: 1px; font-size: 40px;padding-top:10%; margin: 0% 0% 1% 0%;"><b>Welcome to Admin Dashboard - Elearning Management System </b></div>
 
-    <div class="dashboard-card" style="background-color: white; box-shadow: 4px 4px 25px 5px gray;">
-      <div class="circle"><i id="icons" style="margin-left: 30px;" class="fa fa-user"></i></div>
-      <div class="text">Users</div>
-      <div class="sub-text">{{ users().count }} users registered</div>
-    </div>
-
-    <div class="dashboard-card" style="background-color: white; box-shadow: 4px 4px 25px 5px gray;">
-      <div class="circle"><i id="icons" style="margin-left: 25px;" class="fa fa-user-o"></i></div>
-      <div class="text">Professors</div>
-      <div class="sub-text">{{ professors().count }} Professors currently teaching the learners</div>
-    </div>
-
-    <div class="dashboard-card" style="background-color: white; box-shadow: 4px 4px 25px 5px gray;">
-      <div class="circle"><i id="icons" style="margin-left: 25px;" class="fa fa-trophy"></i></div>
-      <div class="text">Courses</div>
-      <div class="sub-text">{{ courses().count }} courses available</div>
-    </div>
-
-    <div class="dashboard-card" style="background-color: white; box-shadow: 4px 4px 25px 5px gray;">
-      <div class="circle"><i id="icons" style="margin-left: 15px;" class="fa fa-graduation-cap"></i></div>
-      <div class="text">Leaners</div>
-      <div class="sub-text">
-        {{ enrollmentcount().count }} enrollments have been made by <b>{{ enrollments().count }}</b> Learners
+<div class="dashboard-container">
+  <div class="sidebar-container">
+    <ul class="sidebar-navigation">
+      <div class="card user-card">
+        <div class="user-img">
+          <img src="assets/img/admin.png" alt="Admin Image" style="width:100%">
+        </div>
+        <div class="card-body">
+          <h4 class="card-title"><b>{{name}}</b></h4>
+        </div>
       </div>
-    </div>
+      
+      <li>
+        <i class="fa fa-plus" aria-hidden="true"></i> 
+        <label (click)="navigateTo('/addProfessor')" style="cursor: pointer;">Add Professor</label>
+      </li>
+      <li>
+        <i class="fa fa-cart-plus" aria-hidden="true"></i> 
+        <label (click)="navigateTo('/addcourse')" style="cursor: pointer;">Add Course</label>
+      </li>
+      <li>
+        <i class="fa fa-book" aria-hidden="true"></i> 
+        <label (click)="navigateTo('/addchapter')" style="cursor: pointer;">Add Chapters</label>
+      </li>
+      <li>
+        <i class="fa fa-check-square" aria-hidden="true"></i> 
+        <label (click)="navigateTo('/approveprofessor')" style="cursor: pointer;">Approve Professor</label>
+      </li>
+      <li>
+        <i class="fa fa-list" aria-hidden="true"></i> 
+        <label (click)="navigateTo('/courselist')" style="cursor: pointer;">Course List</label>
+      </li>
+      <li>
+        <i class="fa fa-user-o" aria-hidden="true"></i> 
+        <label (click)="navigateTo('/professorlist')" style="cursor: pointer;">Professors</label> 
+      </li>
+      <li>
+        <i class="fa fa-user" aria-hidden="true"></i> 
+        <label (click)="navigateTo('/userlist')" style="cursor: pointer;">Users</label>
+      </li>
+    </ul>
+  </div>
 
-    <div class="dashboard-card" style="background-color: white; box-shadow: 4px 4px 25px 5px gray;">
-      <div class="circle"><i id="icons" style="margin-left: 20px;" class="fa fa-list"></i></div>
-      <div class="text">Chapters</div>
-      <div class="sub-text">{{ chapters().count }} courses are with its <br>detailed chapters</div>
+  <div class="main-content">
+    <div class="welcome-section">
+      <h1 class="welcome-title">Welcome to Admin Dashboard - Courseware</h1>
     </div>
-
-    <div class="dashboard-card" style="background-color: white; box-shadow: 4px 4px 25px 5px gray;">
-      <div class="circle"><i id="icons" style="margin-left: 20px;" class="fa fa-heart"></i></div>
-      <div class="text">Favourites</div>
-      <div class="sub-text">{{ wishlist().count }} courses are loved by most of the Leaners </div>
+    
+    <div class="dashboard-grid">
+      <div class="dashboard-card">
+        <div class="circle">
+          <i class="fa fa-user icons"></i>
+        </div>
+        <div class="text">Users</div>
+        <div class="sub-text">
+          {{getUsersCount()}} users registered
+        </div>
+      </div>
+      
+      <div class="dashboard-card">
+        <div class="circle">
+          <i class="fa fa-user icons"></i>
+        </div>
+        <div class="text">Professors</div>
+        <div class="sub-text">
+          {{getProfessorsCount()}} Professors currently teaching the learners
+        </div>
+      </div>
+      
+      <div class="dashboard-card">
+        <div class="circle">
+          <i class="fa fa-trophy icons"></i>
+        </div>
+        <div class="text">Courses</div>
+        <div class="sub-text">
+          {{getCoursesCount()}} courses available
+        </div>
+      </div>
+      
+      <div class="dashboard-card">
+        <div class="circle">
+          <i class="fa fa-graduation-cap icons"></i>
+        </div>
+        <div class="text">Learners</div>
+        <div class="sub-text">
+          {{getEnrollmentCount()}} enrollments have been made by 
+          <b>{{getEnrollmentsCount()}}</b> Learners
+        </div>
+      </div>
+      
+      <div class="dashboard-card">
+        <div class="circle">
+          <i class="fa fa-list icons"></i>
+        </div>
+        <div class="text">Chapters</div>
+        <div class="sub-text">
+          {{getChaptersCount()}} courses are with its <br>detailed chapters
+        </div>
+      </div>
+      
+      <div class="dashboard-card">
+        <div class="circle">
+          <i class="fa fa-heart icons"></i>
+        </div>
+        <div class="text">Favourites</div>
+        <div class="sub-text">
+          {{getWishlistCount()}} courses are loved by most of the Learners
+        </div>
+      </div>
     </div>
   </div>
 </div>
 
-<br><br><br><br>
 <app-footer></app-footer>

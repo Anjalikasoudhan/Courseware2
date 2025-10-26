@@ -1,6 +1,6 @@
 <div class="container register">
   <div class="register-right">
-    
+
     <h2 class="register-heading">
       {{ isUserTabActive() ? 'User Registration' : 'Professor Registration' }}
     </h2>
@@ -17,12 +17,13 @@
     <div class="tab-content mt-4">
 
       <div *ngIf="isUserTabActive()">
-        <form (ngSubmit)="registerUser()" #userForm="ngForm" class="register-form">
+        <form (ngSubmit)="registerUser()" #userForm="ngForm" class="register-form" autocomplete="off">
 
           <div class="form-group">
-            <input type="text" class="form-control" placeholder="user name *" name="username" [(ngModel)]="user.username" required />
+            <input type="text" class="form-control" placeholder="user name *" name="username"
+              [(ngModel)]="user.username" required />
           </div>
-          
+
           <div class="form-group">
             <select class="form-control" name="gender" [(ngModel)]="user.gender" required>
               <option value="" disabled selected>-- Select Gender --</option>
@@ -42,57 +43,69 @@
           </div>
 
           <div class="form-group">
-            <input type="password" class="form-control" placeholder="Password *" name="password" [(ngModel)]="user.password" required />
+            <input type="password" class="form-control" placeholder="Password *" name="password"
+              [(ngModel)]="user.password" required autocomplete="new-password" />
             <small class="form-text text-muted">
               atleast one uppercase, numeric digit, lowercase, special character, length of 6-20
             </small>
           </div>
 
           <div class="form-group">
-            <input type="email" class="form-control" placeholder="email address *" name="email" [(ngModel)]="user.email" required />
+            <input type="email" class="form-control" placeholder="email address *" name="email"
+              [(ngModel)]="user.email" required />
           </div>
 
           <div class="form-group">
-            <input type="tel" class="form-control" placeholder="Mobile *" name="mobile" [(ngModel)]="user.mobile" required maxlength="10" />
+            <input type="tel" class="form-control" placeholder="Mobile *" name="mobile" [(ngModel)]="user.mobile" required
+              maxlength="10" />
             <small class="form-text text-muted">Enter a 10-digit mobile number</small>
           </div>
 
           <div class="form-group">
-            <input type="text" class="form-control" placeholder="address *" name="address" [(ngModel)]="user.address" required />
+            <input type="text" class="form-control" placeholder="address *" name="address" [(ngModel)]="user.address"
+              required />
           </div>
 
           <div class="form-group">
-            <input type="password" class="form-control" placeholder="Confirm Password *" name="confirmPassword" [(ngModel)]="user.confirmPassword" required />
+            <input type="password" class="form-control" placeholder="Confirm Password *" name="confirmPassword"
+              [(ngModel)]="user.confirmPassword" required autocomplete="new-password" />
           </div>
 
           <div class="checkbox">
-            <input type="checkbox" id="userTerms" name="terms" required />
+            <input type="checkbox" id="userTerms" name="terms" required [(ngModel)]="boxchecked" #userterm="ngModel" />
             <label for="userTerms" class="ml-2">I agree to all Terms & Conditions</label>
           </div>
-
+          @if (userterm.invalid && (userterm.touched || userForm.submitted)) {
+          <div style="color: darkred; font-size: small; margin-top: 4px;">
+            You must agree to this before Registration.
+          </div>
+          }
           <div class="already-account">
             Already have an Account? <a (click)="_router.navigate(['/login'])" class="click-here">click here</a>
           </div>
-             <div *ngIf="msg" class="alert-danger text-center p-2 mb-3">
+          <div *ngIf="msg" class="alert-danger text-center p-2 mb-3">
             {{ msg }}
-             </div>
-          <button type="submit" class="btnRegister" [disabled]="!userForm.valid">Register</button>
+          </div>
+          
+          <button type="submit" class="btnRegister">Register</button>
 
         </form>
       </div>
 
       <div *ngIf="isProfessorTabActive()">
-        <form (ngSubmit)="registerProfessor()" #professorForm="ngForm" class="register-form">
+        <form (ngSubmit)="registerProfessor()" #professorForm="ngForm" class="register-form" autocomplete="off">
 
           <div class="form-group">
-            <input type="text" class="form-control" placeholder="Professor Name *" name="professorname" [(ngModel)]="professor.professorname" required />
+            <input type="text" class="form-control" placeholder="Professor Name *" name="professorname"
+              [(ngModel)]="professor.professorname" required />
           </div>
 
           <div class="form-group">
-            <input type="email" class="form-control" placeholder="Email address *" name="prof_email" [(ngModel)]="professor.email" required />
+            <input type="email" class="form-control" placeholder="Email address *" name="prof_email"
+              [(ngModel)]="professor.email" required />
             <small class="form-text text-muted">Example: xyz23@gmail.com</small>
           </div>
-          
+
           <div class="form-group">
             <select class="form-control" name="prof_gender" [(ngModel)]="professor.gender" required>
               <option value="" disabled selected>-- Select Gender --</option>
@@ -103,51 +116,62 @@
           </div>
 
           <div class="form-group">
-            <input type="tel" class="form-control" placeholder="mobile *" name="prof_mobile" [(ngModel)]="professor.mobile" required maxlength="10" />
+            <input type="tel" class="form-control" placeholder="mobile *" name="prof_mobile"
+              [(ngModel)]="professor.mobile" required maxlength="10" />
             <small class="form-text text-muted">Enter 10 digit mobile number</small>
           </div>
 
           <div class="form-group">
-            <input type="password" class="form-control" placeholder="password *" name="prof_password" [(ngModel)]="professor.password" required />
+            <input type="password" class="form-control" placeholder="password *" name="prof_password"
+              [(ngModel)]="professor.password" required autocomplete="new-password" />
             <small class="form-text text-muted">
               atleast one uppercase, numeric digit, lowercase, special character, length of 6-20
             </small>
           </div>
 
           <div class="form-group">
-            <input type="text" class="form-control" placeholder="Institution name *" name="prof_institution" [(ngModel)]="professor.institutionname" required />
+            <input type="text" class="form-control" placeholder="Institution name *" name="prof_institution"
+              [(ngModel)]="professor.institutionname" required />
           </div>
 
           <div class="form-group">
-            <input type="text" class="form-control" placeholder="department *" name="prof_department" [(ngModel)]="professor.department" required />
-          </div>
-          
-          <div class="form-group">
-            <input type="number" class="form-control" placeholder="year of experience *" name="prof_experience" [(ngModel)]="professor.experience" required />
+            <input type="text" class="form-control" placeholder="department *" name="prof_department"
+              [(ngModel)]="professor.department" required />
           </div>
 
           <div class="form-group">
-            <input type="text" class="form-control" placeholder="Degrees completed *" name="prof_degrees" [(ngModel)]="professor.degreecompleted" required />
+            <input type="number" class="form-control" placeholder="year of experience *" name="prof_experience"
+              [(ngModel)]="professor.experience" required />
           </div>
 
           <div class="form-group">
-            <input type="password" class="form-control" placeholder="confirm password *" name="prof_confirmPassword" [(ngModel)]="professor.confirmPassword" required />
+            <input type="text" class="form-control" placeholder="Degrees completed *" name="prof_degrees"
+              [(ngModel)]="professor.degreecompleted" required />
+          </div>
+
+          <div class="form-group">
+            <input type="password" class="form-control" placeholder="confirm password *" name="prof_confirmPassword"
+              [(ngModel)]="professor.confirmPassword" required autocomplete="new-password" />
           </div>
 
           <div class="checkbox">
-            <input type="checkbox" id="profTerms" name="prof_terms" required />
+            <input type="checkbox" id="profTerms" name="prof_terms" required [(ngModel)]="agreementChecked"
+              #remember="ngModel" />
             <label for="profTerms" class="ml-2">I agree to all Terms & Conditions</label>
           </div>
-
+          @if (remember.invalid && (remember.touched || professorForm.submitted)) {
+          <div style="color: darkred; font-size: small; margin-top: 4px;">
+            You must agree to this before Registration.
+          </div>
+          }
           <div class="already-account">
             Already have an Account? <a (click)="_router.navigate(['/login'])" class="click-here">click here</a>
           </div>
-         <div *ngIf="msg" class="alert-danger text-center p-2 mb-3">
+          <div *ngIf="msg" class="alert-danger text-center p-2 mb-3">
             {{ msg }}
-             </div>
-
+          </div>
           
-          <button type="submit" class="btnRegister" [disabled]="!professorForm.valid">Register</button>
+          <button type="submit" class="btnRegister">Register</button>
 
         </form>
       </div>

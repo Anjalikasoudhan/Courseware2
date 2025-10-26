@@ -22,6 +22,10 @@ public class WishlistService
 		return wishlistRepo.save(course);
 	}
 	
+	
+	public long getTotalWishlistCount() {
+        return wishlistRepo.count();
+    }
 	public List<Wishlist> getAllLikedCourses()
 	{
 		return (List<Wishlist>)wishlistRepo.findAll();

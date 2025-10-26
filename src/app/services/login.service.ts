@@ -1,11 +1,11 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable, inject, signal } from '@angular/core'; // <-- ADDED signal
+import { Injectable, inject, signal } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
 import { environment } from '../../environments/environment'; 
 import { Professor } from '../models/professor';
 import { User } from '../models/user';
-import { Router } from '@angular/router'; // <-- ADDED Router
+import { Router } from '@angular/router';
 
 const NAV_URL = environment.apiURL;
 
@@ -21,25 +21,22 @@ interface LoginResponse {
 export class LoginService {
   private readonly http = inject(HttpClient);
   private readonly storage = sessionStorage;
-  private readonly router = inject(Router); // <-- ADDED
+  private readonly router = inject(Router);
 
-  // --- SIGNALS ---
-  // These signals read the initial state from storage, in case of a page refresh
-  public loggedUser = signal(this.storage.getItem('USER') || ''); // <-- ADDED
-  public currRole = signal(this.storage.getItem('ROLE') || ''); // <-- ADDED
-  // ---
+  public loggedUser = signal(this.storage.getItem('USER') || '');
+  public currRole = signal(this.storage.getItem('ROLE') || '');
 
   public loginUserFromRemote(user: User): Observable<LoginResponse> {
     return this.http.post<LoginResponse>(`${NAV_URL}/loginuser`, user).pipe(
       tap((data: LoginResponse) => {
-        // Set storage
         this.setSessionStorage('USER', user.email);
         this.setSessionStorage('ROLE', 'USER');
         this.setSessionStorage('TOKEN', `Bearer ${data.token}`);
 
-        // Set signals
-        this.loggedUser.set(user.email); // <-- ADDED
-        this.currRole.set('USER'); // <-- ADDED
+        this.loggedUser.set(user.email);
+        this.currRole.set('USER');
+        
+        console.log('✅ User logged in:', user.email);
       })
     );
   }
@@ -48,14 +45,14 @@ export class LoginService {
     console.log('Professor login attempt:', professor);
     return this.http.post<LoginResponse>(`${NAV_URL}/loginprofessor`, professor).pipe(
       tap((data: LoginResponse) => {
-        // Set storage
         this.setSessionStorage('USER', professor.email);
         this.setSessionStorage('ROLE', 'PROFESSOR');
         this.setSessionStorage('TOKEN', `Bearer ${data.token}`);
 
-        // Set signals
-        this.loggedUser.set(professor.email); // <-- ADDED
-        this.currRole.set('PROFESSOR'); // <-- ADDED
+        this.loggedUser.set(professor.email);
+        this.currRole.set('PROFESSOR');
+        
+        console.log('✅ Professor logged in:', professor.email);
       })
     );
   }
@@ -63,31 +60,51 @@ export class LoginService {
   public adminLoginFromRemote(email: string, password: string): boolean {
     const isAdmin = email === 'admin@gmail.com' && password === 'admin123';
     
+    console.log('🔐 Admin login attempt:', { email, password, isAdmin });
+    
     if (isAdmin) {
-      // Set storage
       this.setSessionStorage('USER', email);
       this.setSessionStorage('ROLE', 'ADMIN');
       this.setSessionStorage('TOKEN', 'admin-token');
+      this.setSessionStorage('gender', 'Male'); // Add this line
 
-      // Set signals
-      this.loggedUser.set(email); // <-- ADDED
-      this.currRole.set('ADMIN'); // <-- ADDED
+      this.loggedUser.set(email);
+      this.currRole.set('ADMIN');
+      
+      console.log('✅ Admin logged in successfully');
+      console.log('Session Storage after admin login:', {
+        USER: sessionStorage.getItem('USER'),
+        ROLE: sessionStorage.getItem('ROLE'),
+        TOKEN: sessionStorage.getItem('TOKEN'),
+        gender: sessionStorage.getItem('gender')
+      });
+    } else {
+      console.log('❌ Admin login failed');
     }
     
     return isAdmin;
   }
 
-  // ... (isUserLoggedIn, isProfessorLoggedIn, etc. are all perfectly fine) ...
+  // ADD DEBUG LOGGING TO THESE METHODS:
   isUserLoggedIn(): boolean {
-    return this.isRoleLoggedIn('USER');
+    const result = this.isRoleLoggedIn('USER');
+    console.log('🔍 isUserLoggedIn check:', result);
+    return result;
   }
 
   isProfessorLoggedIn(): boolean {
-    return this.isRoleLoggedIn('PROFESSOR');
+    const result = this.isRoleLoggedIn('PROFESSOR');
+    console.log('🔍 isProfessorLoggedIn check:', result);
+    return result;
   }
 
   isAdminLoggedIn(): boolean {
-    return this.isRoleLoggedIn('ADMIN');
+    const result = this.isRoleLoggedIn('ADMIN');
+    console.log('🔍 isAdminLoggedIn check:', result, {
+      user: this.storage.getItem('USER'),
+      role: this.storage.getItem('ROLE')
+    });
+    return result;
   }
 
   getAuthenticatedToken(): string | null {
@@ -101,30 +118,38 @@ export class LoginService {
   getUserType(): string | null {
     return this.storage.getItem('ROLE');
   }
-  // ...
 
   logout(): void {
-    // Clear storage
+    console.log('🚪 Logging out user...');
     this.storage.removeItem('USER');
     this.storage.removeItem('ROLE');
     this.storage.removeItem('TOKEN');
+    this.storage.removeItem('gender');
 
-    // Clear signals
-    this.loggedUser.set(''); // <-- ADDED
-    this.currRole.set(''); // <-- ADDED
+    this.loggedUser.set('');
+    this.currRole.set('');
 
-    // Navigate to login
-    this.router.navigate(['/login']); // <-- ADDED
+    this.router.navigate(['/login']);
   }
 
   private isRoleLoggedIn(role: string): boolean {
     const user = this.storage.getItem('USER');
     const userRole = this.storage.getItem('ROLE');
     
-    return !!(user && userRole === role);
+    const isLoggedIn = !!(user && userRole === role);
+    
+    console.log(`🔐 Role check for ${role}:`, {
+      user,
+      userRole,
+      expectedRole: role,
+      isLoggedIn
+    });
+    
+    return isLoggedIn;
   }
 
   private setSessionStorage(key: string, value: string): void {
+    console.log(`💾 Setting sessionStorage: ${key} = ${value}`);
     this.storage.setItem(key, value);
   }
 }

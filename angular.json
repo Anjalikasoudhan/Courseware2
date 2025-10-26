@@ -20,6 +20,7 @@
              "src/favicon.ico"
                ],
             "styles": [
+              "node_modules/font-awesome/css/font-awesome.css",
               "src/custom-theme.scss",
               "src/styles.css"
             ]
@@ -77,6 +78,7 @@
             "src/favicon.ico"
                ],
             "styles": [
+           "node_modules/font-awesome/css/font-awesome.css",
               "src/styles.css"
             ],
              "polyfills": [  

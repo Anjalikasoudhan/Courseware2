@@ -22,6 +22,15 @@ public class EnrollmentService
 		return enrollmentRepo.save(enrollment);
 	}
 	
+	
+	public long getTotalEnrollmentsCount() {
+        return enrollmentRepo.count();
+    }
+	
+	public long getTotalEnrollmentCount() {
+        return enrollmentRepo.count();
+    }
+	
 	public List<Enrollment> getAllEnrollments()
 	{
 		return (List<Enrollment>)enrollmentRepo.findAll();

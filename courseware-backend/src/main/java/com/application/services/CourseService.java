@@ -17,6 +17,11 @@ public class CourseService
 		return courseRepo.save(course);
 	}
 	
+	
+	public long getTotalCoursesCount() {
+        return courseRepo.count();
+    }
+	
 	public Course addNewCourse(Course course)
 	{
 		return courseRepo.save(course);

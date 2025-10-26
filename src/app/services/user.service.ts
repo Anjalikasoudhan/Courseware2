@@ -1,14 +1,21 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, catchError } from 'rxjs/operators';
 import { environment } from '../../environments/environment'; 
 import { Course } from '../models/course';
 import { Enrollment } from '../models/enrollment';
 import { Wishlist } from '../models/wishlist';
 import { User } from '../models/user';
+import { of } from 'rxjs';
 
 const NAV_URL = environment.apiURL;
+
+interface StatsResponse {
+  count: number;
+  success?: boolean;
+  message?: string;
+}
 
 @Injectable({
   providedIn: 'root'
@@ -16,6 +23,71 @@ const NAV_URL = environment.apiURL;
 export class UserService {
   private readonly http = inject(HttpClient);
 
+  // Dashboard statistics methods - updated endpoints
+  getTotalProfessors(): Observable<StatsResponse> {
+    return this.http.get<StatsResponse>(`${NAV_URL}/api/dashboard/totalprofessors`).pipe(
+      catchError(error => {
+        console.error('Error fetching professors:', error);
+        return of({ count: 0, success: false });
+      })
+    );
+  }
+
+  getTotalUsers(): Observable<StatsResponse> {
+    return this.http.get<StatsResponse>(`${NAV_URL}/api/dashboard/totalusers`).pipe(
+      catchError(error => {
+        console.error('Error fetching users:', error);
+        return of({ count: 0, success: false });
+      })
+    );
+  }
+
+  getTotalCourses(): Observable<StatsResponse> {
+    return this.http.get<StatsResponse>(`${NAV_URL}/api/dashboard/totalcourses`).pipe(
+      catchError(error => {
+        console.error('Error fetching courses:', error);
+        return of({ count: 0, success: false });
+      })
+    );
+  }
+
+  getTotalWishlist(): Observable<StatsResponse> {
+    return this.http.get<StatsResponse>(`${NAV_URL}/api/dashboard/totalwishlist`).pipe(
+      catchError(error => {
+        console.error('Error fetching wishlist:', error);
+        return of({ count: 0, success: false });
+      })
+    );
+  }
+
+  getTotalEnrollments(): Observable<StatsResponse> {
+    return this.http.get<StatsResponse>(`${NAV_URL}/api/dashboard/totalenrollments`).pipe(
+      catchError(error => {
+        console.error('Error fetching enrollments:', error);
+        return of({ count: 0, success: false });
+      })
+    );
+  }
+
+  getTotalEnrollmentCount(): Observable<StatsResponse> {
+    return this.http.get<StatsResponse>(`${NAV_URL}/api/dashboard/totalenrollmentcount`).pipe(
+      catchError(error => {
+        console.error('Error fetching enrollment count:', error);
+        return of({ count: 0, success: false });
+      })
+    );
+  }
+
+  getTotalChapters(): Observable<StatsResponse> {
+    return this.http.get<StatsResponse>(`${NAV_URL}/api/dashboard/totalchapters`).pipe(
+      catchError(error => {
+        console.error('Error fetching chapters:', error);
+        return of({ count: 0, success: false });
+      })
+    );
+  }
+
+  // Your existing methods remain the same
   getAllUsers(): Observable<User[]> {
     return this.http.get<User[]>(`${NAV_URL}/userlist`);
   }
@@ -76,11 +148,9 @@ export class UserService {
   getProfileDetails(loggedUser: string): Observable<User> {
     return this.http.get<any>(`${NAV_URL}/userprofileDetails/${loggedUser}`).pipe(
       map((response: any) => {
-        // If response is an array, return the first element
         if (Array.isArray(response) && response.length > 0) {
           return response[0];
         }
-        // If it's already a single object, return it
         return response;
       })
     );

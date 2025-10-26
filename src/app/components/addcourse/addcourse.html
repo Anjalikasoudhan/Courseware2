@@ -1,1 +1,143 @@
-<p>addcourse works!</p>
+<app-header></app-header>
+
+<div style="background-color: #f4f4f4;">
+
+  <div class="container register">
+    <div class="row">
+        <div class="col-md-10 mx-auto register-right">
+            <div class="tab-content" id="myTabContent">
+                <div class="tab-pane fade show active" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+                    
+                    <h3 class="register-heading"><i class="fa fa-sticky-note-o"></i> New Course</h3>
+                    <small class="text-danger"><b>{{msg}}</b></small>
+                    
+                    <form #courseform="ngForm" (ngSubmit)="addCourse()">
+                        <div class="row register-form">
+                            
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Course Name : <b style="color:red;">*</b></label>
+                                    <input type="text" class="form-control" placeholder="enter course name" 
+                                           name="coursename" [(ngModel)]="course.coursename" required 
+                                           #coursename="ngModel"
+                                           [class.is-invalid]="coursename.invalid && coursename.touched">
+                                    @if (coursename.invalid && coursename.touched) {
+                                      <small class="text-danger"><b>required field</b></small>
+                                    }
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label>Instructor Name : <b style="color:red;">*</b></label>
+                                    <input type="text" class="form-control" placeholder="enter instructor name" 
+                                           name="instructorname" [(ngModel)]="course.instructorname" required 
+                                           #instructorname="ngModel"
+                                           [class.is-invalid]="instructorname.invalid && instructorname.touched">
+                                    @if (instructorname.invalid && instructorname.touched) {
+                                      <small class="text-danger"><b>required field</b></small>
+                                    }
+                                </div>
+                                
+                                @if (showYoutubeLink) {
+                                  <div class="form-group" id="youtubelink">
+                                      <label>YouTube URL : <b style="color:red;">*</b></label>
+                                      <input type="text" class="form-control" placeholder="enter youtube url" 
+                                             name="youtubeurl" [(ngModel)]="course.youtubeurl" 
+                                             #youtubeurl="ngModel">
+                                  </div>
+                                }
+                                
+                                <div class="form-group">
+                                    <label>Course Type : <b style="color:red;">*</b></label>
+                                    <select class="form-control" name="coursetype" [(ngModel)]="course.coursetype" required
+                                            #coursetype="ngModel" (change)="onCourseTypeChange($event)">
+                                        <option value="">Select Course Type</option>
+                                        <option value="Website">Website</option>
+                                        <option value="Youtube">Youtube</option>
+                                        <option value="Live Interaction">Live Interaction</option>
+                                        <option value="Google Classroom">Google Classroom</option>
+                                        <option value="Others">Others</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label>Course Language : <b style="color:red;">*</b></label>
+                                    <select class="form-control" name="language" [(ngModel)]="course.language" required
+                                            #language="ngModel">
+                                        <option value="">Select Language</option>
+                                        <option value="English">English</option>
+                                        <option value="Hindi">Hindi</option>
+                                        <option value="Others">Others</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Enrolled Date : <b style="color:red;">*</b></label>
+                                    <input type="date" class="form-control" name="enrolleddate" 
+                                           [(ngModel)]="course.enrolleddate" required
+                                           #enrolleddate="ngModel"
+                                           [class.is-invalid]="enrolleddate.invalid && enrolleddate.touched"
+                                           placeholder="dd-mm-yyyy"> @if (enrolleddate.invalid && enrolleddate.touched) {
+                                      <small class="text-danger"><b>required field</b></small>
+                                    }
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label>Instructor Institution Name : <b style="color:red;">*</b></label>
+                                    <input type="text" class="form-control" placeholder="enter instructor institution name" 
+                                           name="instructorinstitution" [(ngModel)]="course.instructorinstitution" required 
+                                           #instructorinstitution="ngModel"
+                                           [class.is-invalid]="instructorinstitution.invalid && instructorinstitution.touched">
+                                    @if (instructorinstitution.invalid && instructorinstitution.touched) {
+                                      <small class="text-danger"><b>required field</b></small>
+                                    }
+                                </div>
+                                
+                                @if (showWebsiteLink) {
+                                  <div class="form-group" id="websitelink">
+                                      <label>Website URL : <b style="color:red;">*</b></label>
+                                      <input type="url" class="form-control" placeholder="please mention website url" 
+                                             name="websiteurl" [(ngModel)]="course.websiteurl"
+                                             #websiteurl="ngModel">
+                                  </div>
+                                }
+                                
+                                <div class="form-group">
+                                    <label>Skill Level : <b style="color:red;">*</b></label>
+                                    <select class="form-control" name="skilllevel" [(ngModel)]="course.skilllevel" required
+                                            #skilllevel="ngModel">
+                                        <option value="">Select Skill Level</option>
+                                        <option value="Basic">Basic</option>
+                                        <option value="Intermediate">Intermediate</option>
+                                        <option value="Advanced">Advanced</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="description">Course Description : <b style="color:red;">*</b></label>
+                                    <textarea type="text" rows="4" class="form-control" placeholder="enter course description here" 
+                                              name="description" [(ngModel)]="course.description" required 
+                                              #description="ngModel"
+                                              [class.is-invalid]="description.invalid && description.touched"></textarea>
+                                    @if (description.invalid && description.touched) {
+                                      <small class="text-danger"><b>required field</b></small>
+                                    }
+                                </div>
+                            </div>
+                        </div> <div class="text-center mt-3 mb-4">
+                            <button [disabled]="courseform.invalid" type="submit" class="btnRegister">
+                                <i class="fa fa-plus"></i> Add Course
+                            </button>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+  </div> 
+
+</div>
+
+<app-footer></app-footer>

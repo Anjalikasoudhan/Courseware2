@@ -1,1 +1,136 @@
-<p>courselist works!</p>
+<app-header></app-header>
+
+@if (showYoutubeCard()) {
+  <div id="youtubecoursecard" style="margin-left: 10%; margin-right: 10%; margin-top: 5%;">
+    <div class="headtext">Courses with YouTube Videos</div>
+
+    <!-- ✅ Render carousel only when there are courses -->
+    <owl-carousel-o *ngIf="youtubecourselist | async as youtubeList"
+                    [options]="owlOptions" 
+                    (dragging)="owlDragging($event)">
+      
+      <!-- ✅ Added trackBy to prevent duplicated key errors -->
+      <ng-container *ngFor="let course of (youtubecourselist | async); trackBy: trackByCourseId">
+        <ng-template carouselSlide>
+          <div class="course-card">
+            
+            <!-- ✅ YouTube thumbnail with fallback -->
+            <img [src]="getThumbnail(course.youtubeurl)"
+                 (error)="onImgError($event)"
+                 alt="Course Thumbnail"
+                 class="thumbnail">
+
+            <div class="course-info">
+              <h4>{{ course.coursename }}</h4>
+              <p>Instructor: {{ course.instructorname }}</p>
+              <p>Level: {{ course.skilllevel }}</p>
+            </div>
+
+            <div class="card-actions">
+              <button class="btn btn-primary" (click)="getcoursedetails(course.coursename)">
+                View Details
+              </button>
+              <button class="btn btn-outline-success" *ngIf="isNotLiked()" (click)="addToWishList(course)">
+                ❤️ Add to Wishlist
+              </button>
+            </div>
+
+          </div>
+        </ng-template>
+      </ng-container>
+    </owl-carousel-o>
+
+    <!-- ✅ Optional message when no courses are found -->
+    <div *ngIf="(youtubecourselist | async)?.length === 0" class="text-center text-muted mt-3">
+      No YouTube courses available.
+    </div>
+  </div>
+}
+
+@if (showWebsiteCard()) {
+  <div id="websitecoursecard" class="course-section">
+    <div class="headtext">Courses with Website Content</div>
+
+    <owl-carousel-o [options]="owlOptions">
+      @for (data of (websitecourselist | async); track data.courseid) {
+        <ng-template carouselSlide>
+          <div class="card course-card" (click)="getcoursedetails(data.coursename)">
+            <img class="card-img-top" src="assets/img/websitebg.png" [alt]="data.courseid" />
+            <hr />
+            <h4 class="card-title text-center"><b>{{ data.coursename }}</b></h4>
+            <h6 class="course-id">{{ data.courseid }}</h6>
+            <div><b class="label">Instructor:</b> {{ data.instructorname }}</div>
+            <div><b class="label">Learners:</b> {{ data.enrolledcount }} enrolled previously</div>
+            <div><b class="label">Level:</b> {{ data.skilllevel }}</div>
+            <div><b class="label">Language:</b> {{ data.language }}</div>
+            <p class="desc">{{ data.description }}</p>
+            <button class="btn btn-primary" (click)="getcoursedetails(data.coursename)">More Info</button>
+          </div>
+        </ng-template>
+      }
+    </owl-carousel-o>
+  </div>
+}
+@if (showCourseDetails()) {
+
+  @for (data of (courselist | async); track data.courseid) {
+    <div id="coursedetailscard" class="details-card">
+      <div class="card-body">
+        <h4 class="card-title text-center"><b>{{ data.coursename }}</b></h4>
+        <h6 class="course-id">{{ data.courseid }}</h6>
+        <div><b class="label">Instructor Name:</b> {{ data.instructorname }}</div>
+        <div><b class="label">Institution:</b> {{ data.instructorinstitution }}</div>
+        <div><b class="label">Learners:</b> {{ data.enrolledcount }}</div>
+        <div><b class="label">Level:</b> {{ data.skilllevel }}</div>
+        <div><b class="label">Language:</b> {{ data.language }}</div>
+        <p class="desc">{{ data.description }}</p>
+
+        @if (isNotEnrolled()) {
+          <button class="btn btn-primary" (click)="enrollcourse(data)">Enroll Now</button>
+        } @else {
+          <button class="btn btn-secondary">Enrolled</button>
+        }
+
+        <button class="btn btn-primary" (click)="visitCourse(data.coursename)">Visit Course</button>
+        <button class="btn btn-primary" (click)="backToCourseList()">Back</button>
+
+        @if (isNotLiked()) {
+          <button class="wishlist-btn" (click)="addToWishList(data)">
+            <i class="fa fa-heart-o fa-2x"></i> Like
+          </button>
+        } @else {
+          <button class="wishlist-btn liked">
+            <i class="fa fa-heart fa-2x"></i> Fav
+          </button>
+        }
+      </div>
+    </div>
+  }
+}
+
+@if (showEnrollSuccess()) {
+  <div id="enrollsuccess" class="enroll-success">
+    <div class="card-body">
+      <div class="success-banner">
+        <div class="check-icon">
+          <i class="fa fa-check"></i>
+        </div>
+        <div class="msg">Great choice, {{ loggedUser }}!</div>
+      </div>
+      <div class="jump">
+        <p>Jump right into the course</p>
+        <div class="course-preview">
+          <youtube-player [videoId]="enrolledURL" [height]="200" [width]="400"></youtube-player>
+          <div class="course-info">
+            <h4>{{ enrolledName }}</h4>
+            <h6 class="course-id">{{ enrolledID }}</h6>
+            <div><b>Instructor:</b> {{ enrolledInstructorName }}</div>
+            <button class="btn btn-primary" (click)="visitCourse(enrolledName)">Visit Course</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+}
+
+<app-footer></app-footer>
