@@ -12,7 +12,7 @@ export class Course
     skilllevel : string = '';
     language : string = '';
     description : string  = '';
-
+ isEnrolled?: boolean = false; 
     constructor() {}
 
 }

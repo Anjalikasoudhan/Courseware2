@@ -37,7 +37,7 @@ public class CourseService
 		courseRepo.updateEnrolledcount(enrolledcount, coursename);
 	}
 	
-	public Course fetchCourseByCoursename(String coursename)
+	public List<Course> fetchCourseByCoursename(String coursename)
 	{
 		return courseRepo.findByCoursename(coursename);
 	}

@@ -4,46 +4,123 @@
   <b><i class="fa fa-graduation-cap"></i> My Learning</b>
 </div>
 
-<div class="course-carousel-container">
-  <owl-carousel-o [options]="owlOptions" (dragging)="owlDragging($event)">
-    <ng-template carouselSlide *ngFor="let enrollment of myenrollments$ | async">
-      <div class="card course-card">
+<!-- Debug Info -->
+<div class="debug-info" style="background: #f8f9fa; padding: 10px; margin: 10px 0; border-radius: 4px; font-size: 12px;">
+  <strong>Debug Info:</strong>
+  User: {{ loggedUser }}, 
+  Role: {{ currRole }}, 
+  Loading: {{ isLoading }}, 
+  Error: {{ errorMessage }},
+  Enrollments Count: {{ enrollments.length }}
+</div>
+
+<!-- Loading State -->
+<div *ngIf="isLoading" class="loading-message">
+  <div class="spinner"></div>
+  <p>Loading your courses...</p>
+</div>
+
+<!-- Error State -->
+<div *ngIf="errorMessage && !isLoading" class="error-message">
+  <i class="fa fa-exclamation-triangle"></i>
+  <p>{{ errorMessage }}</p>
+  <button class="btn btn-primary" (click)="loadEnrollments()">Try Again</button>
+</div>
+
+<!-- Courses Content -->
+<div *ngIf="!isLoading && !errorMessage" class="courses-container">
+  
+  <!-- Simple Grid View (Fallback) -->
+  <div *ngIf="hasEnrollments()" class="simple-grid-view">
+    <h3>Your Enrolled Courses ({{ enrollments.length }})</h3>
+    <div class="grid-container">
+      <div *ngFor="let enrollment of enrollments" class="course-card">
         <div class="card-body">
           <img [src]="getCourseImage(enrollment.coursetype)" 
                [alt]="enrollment.coursetype + ' course'" 
                class="course-image">
           
-          <hr>
-          
-          <h4 class="course-title">{{enrollment.coursename}}</h4>
-          
-          <div class="course-id">{{enrollment.courseid}}</div>
-          
-          <div class="course-detail">
-            <span class="detail-label">Date: </span>
-            <span class="detail-value">{{enrollment.enrolleddate}}</span>
+          <div class="course-content">
+            <h4 class="course-title">{{ enrollment.coursename }}</h4>
+            
+            <div class="course-id">{{ enrollment.courseid }}</div>
+            
+            <div class="course-detail">
+              <span class="detail-label">Instructor: </span>
+              <span class="detail-value">{{ enrollment.instructorname }}</span>
+            </div>
+            
+            <div class="course-detail">
+              <span class="detail-label">Enrolled: </span>
+              <span class="detail-value">{{ enrollment.enrolleddate }}</span>
+            </div>
+            
+            <div class="course-detail">
+              <span class="detail-label">Level: </span>
+              <span class="detail-value">{{ enrollment.skilllevel }}</span>
+            </div>
+            
+            <button (click)="visitCourse(enrollment.coursename)" 
+                    class="btn btn-primary visit-btn">
+              Visit Course
+            </button>
           </div>
-          
-          <div class="course-detail">
-            <span class="detail-label">Your ID: </span>
-            <span class="user-id-badge">{{enrollment.enrolleduserid}}</span>
-          </div>
-          
-          <!-- Other course details... -->
-          
-          <button (click)="visitCourse(enrollment.coursename)" 
-                  class="btn btn-primary" 
-                  [attr.aria-label]="'Visit ' + enrollment.coursename + ' course'">
-            Visit Course
-          </button>
         </div>
       </div>
-    </ng-template>
-  </owl-carousel-o>
-</div>
+    </div>
+  </div>
 
-<div *ngIf="(myenrollments$ | async)?.length === 0" class="no-courses-message">
-  <p>You haven't enrolled in any courses yet.</p>
+  <!-- Carousel View -->
+  <div *ngIf="hasEnrollments()" class="carousel-view">
+    <h3>Your Courses Carousel</h3>
+    <div class="course-carousel-container">
+      <owl-carousel-o [options]="owlOptions">
+        <ng-template carouselSlide *ngFor="let enrollment of enrollments">
+          <div class="card course-card">
+            <div class="card-body">
+              <img [src]="getCourseImage(enrollment.coursetype)" 
+                   [alt]="enrollment.coursetype + ' course'" 
+                   class="course-image">
+              
+              <div class="course-content">
+                <h4 class="course-title">{{ enrollment.coursename }}</h4>
+                
+                <div class="course-id">{{ enrollment.courseid }}</div>
+                
+                <div class="course-detail">
+                  <span class="detail-label">Instructor: </span>
+                  <span class="detail-value">{{ enrollment.instructorname }}</span>
+                </div>
+                
+                <div class="course-detail">
+                  <span class="detail-label">Enrolled: </span>
+                  <span class="detail-value">{{ enrollment.enrolleddate }}</span>
+                </div>
+                
+                <div class="course-detail">
+                  <span class="detail-label">Level: </span>
+                  <span class="detail-value">{{ enrollment.skilllevel }}</span>
+                </div>
+                
+                <button (click)="visitCourse(enrollment.coursename)" 
+                        class="btn btn-primary visit-btn">
+                  Visit Course
+                </button>
+              </div>
+            </div>
+          </div>
+        </ng-template>
+      </owl-carousel-o>
+    </div>
+  </div>
+
+  <!-- No Courses Message -->
+  <div *ngIf="!hasEnrollments() && !isLoading && !errorMessage" class="no-courses-message">
+    <i class="fa fa-book" style="font-size: 48px; color: #6c757d; margin-bottom: 15px;"></i>
+    <h3>No Courses Enrolled</h3>
+    <p>You haven't enrolled in any courses yet.</p>
+    <button class="btn btn-primary" routerLink="/courselist">Browse Available Courses</button>
+  </div>
 </div>
 
 <app-footer></app-footer>

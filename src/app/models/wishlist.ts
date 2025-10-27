@@ -12,6 +12,6 @@ export class Wishlist
     skilllevel : string = '';
     language : string = '';
     description : string  = '';
-
+     youtubeurl:string='';
     constructor() {}
 }

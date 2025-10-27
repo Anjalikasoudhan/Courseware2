@@ -62,7 +62,7 @@ public class UserController
 	
 	@PostMapping("/enrollnewcourse/{email}/{role}")
 	@CrossOrigin(origins = "http://localhost:4200")
-	public String enrollNewCourse(@RequestBody Enrollment enrollment, @PathVariable String email, @PathVariable String role) throws Exception
+	public ResponseEntity<Enrollment> enrollNewCourse(@RequestBody Enrollment enrollment, @PathVariable String email, @PathVariable String role) throws Exception
 	{
 		String enrolledUserName = "",enrolledUserID = "";
 		
@@ -124,7 +124,8 @@ public class UserController
 			}
 		}
 		
-		return "done";
+		return new ResponseEntity<Enrollment>(enrollmentObj, HttpStatus.OK);
+	
 	}
 	
 	@GetMapping("/getenrollmentstatus/{coursename}/{email}/{role}")
@@ -208,26 +209,56 @@ public class UserController
 		return new ResponseEntity<List<Wishlist>>(Wishlists, HttpStatus.OK);
 	}
 	
+	// In UserController.java
+
 	@GetMapping("/getenrollmentbyemail/{email}/{role}")
 	@CrossOrigin(origins = "http://localhost:4200")
 	public ResponseEntity<List<Enrollment>> getEnrollmentsByEmail(@PathVariable String email, @PathVariable String role) throws Exception
 	{
-		User userObj;
-		Professor professorObj;
-		String enrolledUser = "";
-		if(role.equalsIgnoreCase("user"))
-		{
-		    userObj = userService.fetchUserByEmail(email);
-		    enrolledUser = userObj.getUsername();
-		}
-		else if(role.equalsIgnoreCase("professor"))
-		{
-		    professorObj = professorService.fetchProfessorByEmail(email);
-		    enrolledUser = professorObj.getProfessorname();
-		}
-		
-		List<Enrollment> enrollments = enrollmentService.fetchByEnrolledusername(enrolledUser);
-		return new ResponseEntity<List<Enrollment>>(enrollments, HttpStatus.OK);
+	    System.out.println("🔍 DEBUG: getEnrollmentsByEmail called with email: " + email + ", role: " + role);
+	    
+	    User userObj = null;
+	    Professor professorObj = null;
+	    String enrolledUser = "";
+	    
+	    if(role.equalsIgnoreCase("user"))
+	    {
+	        userObj = userService.fetchUserByEmail(email);
+	        if(userObj != null) {
+	            enrolledUser = userObj.getUsername();
+	            System.out.println("✅ DEBUG: Found user - Username: " + enrolledUser + ", Email: " + email);
+	        } else {
+	            System.out.println("❌ DEBUG: User not found for email: " + email);
+	            return new ResponseEntity<List<Enrollment>>(new ArrayList<>(), HttpStatus.OK);
+	        }
+	    }
+	    else if(role.equalsIgnoreCase("professor"))
+	    {
+	        professorObj = professorService.fetchProfessorByEmail(email);
+	        if(professorObj != null) {
+	            enrolledUser = professorObj.getProfessorname();
+	            System.out.println("✅ DEBUG: Found professor - Name: " + enrolledUser + ", Email: " + email);
+	        } else {
+	            System.out.println("❌ DEBUG: Professor not found for email: " + email);
+	            return new ResponseEntity<List<Enrollment>>(new ArrayList<>(), HttpStatus.OK);
+	        }
+	    }
+	    
+	    System.out.println("🔍 DEBUG: Looking for enrollments with username: " + enrolledUser);
+	    
+	    // Get all enrollments to debug
+	    List<Enrollment> allEnrollments = enrollmentService.getAllEnrollments();
+	    System.out.println("📊 DEBUG: Total enrollments in system: " + allEnrollments.size());
+	    
+	    // Print all enrollments for debugging
+	    for(Enrollment e : allEnrollments) {
+	        System.out.println("📝 DEBUG Enrollment - Username: '" + e.getEnrolledusername() + "', Course: " + e.getCoursename());
+	    }
+	    
+	    List<Enrollment> userEnrollments = enrollmentService.fetchByEnrolledusername(enrolledUser);
+	    System.out.println("✅ DEBUG: Found " + userEnrollments.size() + " enrollments for user: " + enrolledUser);
+	    
+	    return new ResponseEntity<List<Enrollment>>(userEnrollments, HttpStatus.OK);
 	}
 	
 	@GetMapping("/getchapterlistbycoursename/{coursename}")

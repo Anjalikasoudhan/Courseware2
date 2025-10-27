@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
-import { map, catchError } from 'rxjs/operators';
+import { map, catchError, tap } from 'rxjs/operators';
 import { environment } from '../../environments/environment'; 
 import { Course } from '../models/course';
 import { Enrollment } from '../models/enrollment';
@@ -23,7 +23,7 @@ interface StatsResponse {
 export class UserService {
   private readonly http = inject(HttpClient);
 
-  // Dashboard statistics methods - updated endpoints
+  // Dashboard methods
   getTotalProfessors(): Observable<StatsResponse> {
     return this.http.get<StatsResponse>(`${NAV_URL}/api/dashboard/totalprofessors`).pipe(
       catchError(error => {
@@ -87,7 +87,6 @@ export class UserService {
     );
   }
 
-  // Your existing methods remain the same
   getAllUsers(): Observable<User[]> {
     return this.http.get<User[]>(`${NAV_URL}/userlist`);
   }
@@ -116,20 +115,76 @@ export class UserService {
   }
 
   getEnrollmentStatus(coursename: string, loggedUser: string, currRole: string): Observable<boolean> {
-    return this.http.get<boolean>(
+    return this.http.get<string[]>(
       `${NAV_URL}/getenrollmentstatus/${coursename}/${loggedUser}/${currRole}`
+    ).pipe(
+      map(response => response.includes('enrolled'))
     );
   }
 
-  getEnrollmentByEmail(loggedUser: string, currRole: string): Observable<Enrollment[]> {
-    return this.http.get<Enrollment[]>(
-      `${NAV_URL}/getenrollmentbyemail/${loggedUser}/${currRole}`
-    );
-  }
+  // ⬇️⬇️ FIXED METHOD WITH BETTER ERROR HANDLING ⬇️⬇️
 
+getEnrollmentByEmail(loggedUser: string, currRole: string): Observable<Enrollment[]> {
+  console.log('📧 Frontend: getEnrollmentByEmail called with:', { loggedUser, currRole });
+  
+  if (!loggedUser || loggedUser === '{}' || !currRole || currRole === '{}') {
+    console.error('❌ Frontend: Invalid parameters for getEnrollmentByEmail');
+    return of([]);
+  }
+  
+  const url = `${NAV_URL}/getenrollmentbyemail/${loggedUser}/${currRole}`;
+  console.log('🌐 Frontend: Making API call to:', url);
+  
+  return this.http.get<Enrollment[]>(url).pipe(
+    tap(enrollments => {
+      console.log('✅ Frontend: Enrollments received from API:', enrollments);
+      console.log('📊 Frontend: Number of enrollments:', enrollments?.length);
+      
+      if (enrollments && enrollments.length > 0) {
+        enrollments.forEach((enrollment, index) => {
+          console.log(`📝 Frontend: Enrollment ${index + 1}:`, {
+            course: enrollment.coursename,
+            username: enrollment.enrolledusername,
+            date: enrollment.enrolleddate
+          });
+        });
+      } else {
+        console.log('ℹ️ Frontend: No enrollments found for user');
+      }
+    }),
+    catchError(error => {
+      console.error('❌ Frontend: Error fetching enrollments:', error);
+      console.error('🔧 Frontend: Error details:', {
+        status: error.status,
+        message: error.message,
+        url: error.url,
+        error: error.error
+      });
+      return of([]);
+    })
+  );
+}
+
+removeFromWishlist(email: string, courseId: string): Observable<any> {
+  console.log('Frontend: Removing from wishlist:', { email, courseId });
+  return this.http.delete(`${NAV_URL}/removefromwishlist`, {
+    body: {
+      useremail: email,
+      courseid: courseId
+    }
+  }).pipe(
+    tap(response => console.log('Frontend: Remove wishlist response:', response)),
+    catchError(error => {
+      console.error('Frontend: Error removing from wishlist:', error);
+      throw error;
+    })
+  );
+}
   getWishlistStatus(coursename: string, loggedUser: string): Observable<boolean> {
-    return this.http.get<boolean>(
+    return this.http.get<string[]>(
       `${NAV_URL}/getwishliststatus/${coursename}/${loggedUser}`
+    ).pipe(
+      map(response => response.includes('liked'))
     );
   }
 

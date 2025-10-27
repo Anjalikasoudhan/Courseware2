@@ -66,16 +66,7 @@ public class ProfessorController
 		return new ResponseEntity<List<Course>>(websiteCourseList, HttpStatus.OK);
 	}
 	
-	@GetMapping("/courselistbyname/{coursename}")
-	@CrossOrigin(origins = "http://localhost:4200")
-	public ResponseEntity<List<Course>> getCourseListByName(@PathVariable String coursename) throws Exception
-	{
-		Course courseList = courseService.fetchCourseByCoursename(coursename);
-		System.out.println(courseList.getCoursename()+" ");
-		List<Course> courselist = new ArrayList<>();
-		courselist.add(courseList);
-		return new ResponseEntity<List<Course>>(courselist, HttpStatus.OK);
-	}
+	
 	
 	@GetMapping("/professorlistbyemail/{email}")
 	@CrossOrigin(origins = "http://localhost:4200")

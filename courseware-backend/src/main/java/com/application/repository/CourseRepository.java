@@ -11,7 +11,7 @@ import com.application.model.Course;
 
 public interface CourseRepository extends CrudRepository<Course, Integer>
 {    
-    public Course findByCoursename(String coursename);
+    public List<Course> findByCoursename(String coursename);
 	
 	public Course findByCourseid(String courseid);
 	

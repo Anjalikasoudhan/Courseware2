@@ -1,1 +1,168 @@
-<p>mywishlist works!</p>
+<app-header></app-header>
+
+<!-- Loading State -->
+@if (isLoading) {
+  <div style="text-align: center; padding: 40px;">
+    <h3>Loading your wishlist...</h3>
+    <p>Please wait while we fetch your saved courses.</p>
+  </div>
+}
+
+<!-- Error State -->
+@else if (hasError) {
+  <div style="text-align: center; padding: 40px; color: #dc3545;">
+    <h3>Error loading wishlist</h3>
+    <p>There was a problem loading your wishlist. Please try again.</p>
+    <button (click)="refreshWishlist()" class="btn btn-primary" style="margin-top: 20px;">
+      Try Again
+    </button>
+  </div>
+}
+
+<!-- Content State -->
+@else {
+  <!-- YouTube Courses from Wishlist -->
+  @if (youtubeWishlist.length > 0) {
+    <div class="wishlist-container">
+      <div class="headtext">Courses with Youtube Videos from Wishlist</div>
+      
+      <div class="courses-grid">
+        @for (data of youtubeWishlist; track data.courseid) {
+          @let videoId = getYouTubeVideoId(data.youtubeurl);
+          @let thumbnailUrl = getYouTubeThumbnail(videoId);
+          
+          <div class="course-card youtube-card">
+            <div class="youtube-player-container">
+              @if (isYouTubeApiLoaded && videoId) {
+                <!-- YouTube Player -->
+                <youtube-player 
+                  [videoId]="videoId" 
+                  suggestedQuality="highres" 
+                  [height]="200" 
+                  [width]="'100%'"
+                  (error)="onYouTubePlayerError($event)">
+                </youtube-player>
+              } @else {
+                <!-- Fallback Thumbnail -->
+                <div class="thumbnail-fallback">
+                  <img 
+                    [src]="thumbnailUrl" 
+                    [alt]="data.coursename"
+                    (error)="onThumbnailError($event)"
+                    class="thumbnail-image">
+                  <div class="thumbnail-overlay">
+                    <div class="play-icon">▶</div>
+                    <p class="thumbnail-text">Click "Visit Course" to watch</p>
+                  </div>
+                </div>
+              }
+            </div>
+            
+            <div class="card-header">
+              <h4 class="course-title">{{data.coursename}}</h4>
+              <div class="course-id-container">
+                <span class="course-id">{{data.courseid}}</span>
+              </div>
+            </div>
+            
+            <div class="card-body">
+              <div class="course-details">
+                <div class="detail-item">
+                  <span class="detail-label">Instructor:</span>
+                  <span class="detail-value">{{data.instructorname}}</span>
+                </div>
+                <div class="detail-item">
+                  <span class="detail-label">Learners:</span>
+                  <span class="detail-value">{{data.enrolledcount}} enrolled previously</span>
+                </div>
+                <div class="detail-item">
+                  <span class="detail-label">Level:</span>
+                  <span class="detail-value">{{data.skilllevel}}</span>
+                </div>
+                <div class="detail-item">
+                  <span class="detail-label">Language:</span>
+                  <span class="detail-value">{{data.language}}</span>
+                </div>
+              </div>
+              
+              <div class="course-description">
+                <p class="description-text">{{data.description}}</p>
+              </div>
+              
+              <div class="card-actions">
+                <a (click)="visitCourse(data.coursename)" class="btn btn-primary">Visit Course</a>
+                <a (click)="removeFromWishlist(data.courseid)" class="btn btn-danger">Remove</a>
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  }
+
+  <!-- Website Courses from Wishlist -->
+  @if (websiteWishlist.length > 0) {
+    <div class="wishlist-container">
+      <div class="headtext">Courses with Website Content from Wishlist</div>
+      
+      <div class="courses-grid">
+        @for (data of websiteWishlist; track data.courseid) {
+          <div class="course-card website-card">
+            <div class="website-image-container">
+              <img class="website-image" [src]="'assets/img/websitebg.png'" [alt]="data.coursename">
+            </div>
+            
+            <div class="card-header">
+              <h4 class="course-title">{{data.coursename}}</h4>
+              <div class="course-id-container">
+                <span class="course-id">{{data.courseid}}</span>
+              </div>
+            </div>
+            
+            <div class="card-body">
+              <div class="course-details">
+                <div class="detail-item">
+                  <span class="detail-label">Instructor:</span>
+                  <span class="detail-value">{{data.instructorname}}</span>
+                </div>
+                <div class="detail-item">
+                  <span class="detail-label">Learners:</span>
+                  <span class="detail-value">{{data.enrolledcount}} enrolled previously</span>
+                </div>
+                <div class="detail-item">
+                  <span class="detail-label">Level:</span>
+                  <span class="detail-value">{{data.skilllevel}}</span>
+                </div>
+                <div class="detail-item">
+                  <span class="detail-label">Language:</span>
+                  <span class="detail-value">{{data.language}}</span>
+                </div>
+              </div>
+              
+              <div class="course-description">
+                <p class="description-text">{{data.description}}</p>
+              </div>
+              
+              <div class="card-actions">
+                <a (click)="openURL(data.websiteurl)" class="btn btn-primary">Visit Course</a>
+                <a (click)="removeFromWishlist(data.courseid)" class="btn btn-danger">Remove</a>
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  }
+
+  <!-- Empty State when no wishlist items -->
+  @if (youtubeWishlist.length === 0 && websiteWishlist.length === 0 && !isLoading) {
+    <div class="empty-state">
+      <h2>Your wishlist is empty</h2>
+      <p>Start adding courses to your wishlist to see them here!</p>
+      <a routerLink="/courses" class="btn btn-primary">Browse Courses</a>
+    </div>
+  }
+}
+
+<br>
+<app-footer></app-footer>

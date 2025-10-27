@@ -1,1 +1,293 @@
-<p>fullcourse works!</p>
+
+<app-header></app-header>
+
+<div class="container">
+  <div>
+    <div style="font-weight: bolder; color: darkgreen; font-size: 35px; margin-bottom: 2%;">
+      Welcome to {{ courseName }} course 👋
+    </div>
+
+    <!-- ✅ YouTube player -->
+    <div *ngIf="video; else noVideoPlaceholder">
+      <youtube-player
+        style="margin-right: 5%;"
+        [videoId]="video"
+        suggestedQuality="highres"
+        [height]="380"
+        [width]="640"
+        (ready)="onPlayerReady($event)"
+        (error)="onPlayerError($event)">
+      </youtube-player>
+    </div>
+
+    <ng-template #noVideoPlaceholder>
+      <div class="video-placeholder" style="margin-right: 5%; height: 380px; width: 640px; background: #f5f5f5; border: 2px dashed #ccc; display: flex; align-items: center; justify-content: center;">
+        <div style="text-align: center;">
+          <i class="fa fa-play-circle" style="font-size: 48px; color: #ccc; margin-bottom: 20px;"></i>
+          <p style="color: #666;">Select a chapter to start watching</p>
+        </div>
+      </div>
+    </ng-template>
+
+    <!-- ✅ Chapter List -->
+    <div class="chapter-list" *ngIf="chapterlist | async as chapters">
+      <div *ngFor="let chapter of chapters" style="margin-top: 2%;">
+        <div style="font-weight: bold; font-size: large; align-items: center; color: darkred;">
+          <i class="fa fa-list"></i> Course Contents
+        </div>
+        <div style="color: gray; font-weight: 400; font-size: small; margin-bottom: 5%;">
+          (click on chapter name to get into the videos)
+        </div>
+
+        <div
+          *ngIf="getFirstAvailableChapter(chapter) === 0"
+          style="color: red; font-size: medium; font-weight: bolder; margin: 30% 5% 0;">
+          Currently No Chapters available for this Course. Please wait, the Instructor will be adding the chapters soon here.
+        </div>
+
+        <!-- ✅ Repeated chapters -->
+        <ng-container *ngFor="let i of [1,2,3,4,5,6,7,8]">
+          <div
+            *ngIf="hasChapterContent(chapter, i)"
+            style="cursor: pointer;"
+            (click)="setChapter(i)"
+            [class.selected]="isChapterSelected(i)"
+            class="chapter-item"
+          >
+            <div 
+              class="box" 
+              [class.selected-box]="isChapterSelected(i)"
+              id="select-box">
+              <i class="fa fa-check" *ngIf="isChapterSelected(i)"></i>
+            </div>
+            <div
+              class="name"
+              (click)="openChapter(getChapterProperty(chapter, 'chapter' + i + 'id'), i)"
+            >
+              {{i}}) {{ getChapterProperty(chapter, 'chapter' + i + 'name') }}
+            </div>
+            <div style="color: gray; font-weight: 600; font-size: small; margin-left: 12%;">
+              subcontents (1/1)
+            </div>
+            <hr />
+          </div>
+        </ng-container>
+      </div>
+    </div>
+  </div>
+
+  <!-- ✅ Sub-container -->
+  <div class="sub-container">
+    <div class="sub-btns">
+      <button (click)="openOverview()" [class.active]="activeTab === 'overview'" class="btn btn-info">Overview</button>
+      <button (click)="openQandA()" [class.active]="activeTab === 'qa'" class="btn btn-info">Q&A</button>
+      <button (click)="openDownloads()" [class.active]="activeTab === 'downloads'" class="btn btn-info">Downloads</button>
+      <button (click)="openNotes()" [class.active]="activeTab === 'notes'" class="btn btn-info">Notes</button>
+      <button (click)="openAnnouncements()" [class.active]="activeTab === 'announcements'" class="btn btn-info">Announcements</button>
+      <hr>
+    </div>
+
+    <!-- ✅ Overview Section -->
+    <div id="overview" class="descriptions" *ngIf="activeTab === 'overview' && (courselist | async) as courses">
+      <div *ngFor="let course of courses">
+        <strong style="font-weight: bolder; font-size: 25px;">About this Course</strong>
+        <h3 style="margin-top: 1.5%; font-weight: normal; font-size: 21px;">
+          {{ course.coursename }}
+        </h3>
+        <h6 style="padding: 5px 20px; background-color: darkgoldenrod; border-radius: 5px; color: white; font-weight: bold; margin: 1% 0;">
+          {{ course.courseid }}
+        </h6>
+        <hr>
+
+        <p style="color: darkblue; font-size: large;">
+          {{ course.description }}
+        </p>
+        <hr>
+
+        <div><b style="color: darkred;">Level :</b> <b style="margin-left: 12%;">{{ course.skilllevel }}</b></div>
+        <div><b style="color: darkred;">Language :</b> <b style="margin-left: 7%;">{{ course.language }}</b></div>
+        <div><b style="color: darkred;">Course Type :</b> <b style="margin-left: 4.2%;">{{ course.coursetype }} contents</b></div>
+        <div><b style="color: darkred;">Instructor :</b> <b style="margin-left: 7%;">{{ course.instructorname }} - {{ course.instructorinstitution }}</b></div>
+        <div><b style="color: darkred;">Enrolled Date :</b> <b style="margin-left: 3%;">{{ course.enrolleddate }}</b></div>
+        <div><b style="color: darkred;">Learners :</b> <b style="margin-left: 8.5%;">{{ course.enrolledcount }} learners enrolled previously</b></div>
+        <hr>
+
+        <div>
+          <strong>Features</strong>
+          <label style="margin-left: 10%;">Available on <span style="color: blueviolet;">Android</span> and <span style="color: blueviolet;">iOS</span></label>
+        </div>
+        <hr>
+        <hr>
+      </div>
+    </div>
+
+    <!-- ✅ Q&A Section -->
+   <!-- ✅ Q&A Section -->
+<div id="qa" class="descriptions" *ngIf="activeTab === 'qa'">
+  <div class="qa-header">
+    <div class="search-container">
+      <div class="search-icon">
+        <i class="fa fa-search"></i>
+      </div>
+      <input 
+        class="form-control search-input" 
+        type="text" 
+        placeholder="Search all course questions..."
+        [(ngModel)]="searchTerm"
+        (input)="searchQuestions()">
+    </div>
+    
+    <button class="btn btn-primary ask-btn" (click)="toggleQuestion()">
+      <i class="fa fa-plus"></i> Ask Question
+    </button>
+  </div>
+
+  <!-- Ask Question Form -->
+  <div class="ask-question-form" *ngIf="showQuestionInput">
+    <textarea 
+      [(ngModel)]="newQuestionText"
+      (keypress)="onQuestionKeyPress($event)"
+      rows="4" 
+      class="form-control question-textarea" 
+      placeholder="Type your question here... Press Enter to post"></textarea>
+    <div class="question-actions">
+      <button class="btn btn-primary btn-sm" (click)="postQuestion()">Post Question</button>
+      <button class="btn btn-secondary btn-sm" (click)="toggleQuestion()">Cancel</button>
+    </div>
+  </div>
+
+  <!-- Questions List -->
+  <div class="questions-list" *ngIf="questions$ | async as questions">
+    
+    <!-- No Questions Message -->
+    <div *ngIf="questions.length === 0" class="no-questions">
+      <i class="fa fa-comments"></i>
+      <h4>No questions yet</h4>
+      <p>Be the first to ask a question about this course!</p>
+    </div>
+
+    <!-- Questions -->
+    <div *ngFor="let question of questions" class="question-card" [class.resolved]="question.isResolved">
+      
+      <!-- Question Header -->
+      <div class="question-header">
+        <div class="question-meta">
+          <span class="asked-by">{{ question.askedBy }}</span>
+          <span class="asked-date">{{ question.askedDate | date:'medium' }}</span>
+          <span *ngIf="question.isResolved" class="resolved-badge">
+            <i class="fa fa-check-circle"></i> Resolved
+          </span>
+        </div>
+        <div class="question-actions" *ngIf="isQuestionOwner(question) && !question.isResolved">
+          <button class="btn btn-success btn-sm" (click)="markAsResolved(question.id)">
+            Mark Resolved
+          </button>
+        </div>
+      </div>
+
+      <!-- Question Content -->
+      <div class="question-content">
+        {{ question.question }}
+      </div>
+
+      <!-- Answers Section -->
+      <div class="answers-section">
+        <div class="answers-count">
+          {{ question.answers.length }} {{ question.answers.length === 1 ? 'answer' : 'answers' }}
+        </div>
+
+        <!-- Answers List -->
+        <div *ngFor="let answer of question.answers" class="answer-card" [class.accepted]="answer.isAccepted">
+          <div class="answer-header">
+            <div class="answer-meta">
+              <span class="answered-by">
+                {{ answer.answeredBy }}
+                <span *ngIf="answer.isInstructor" class="instructor-badge">Instructor</span>
+              </span>
+              <span class="answered-date">{{ answer.answeredDate | date:'medium' }}</span>
+            </div>
+            <div class="answer-actions">
+              <button class="btn btn-outline-primary btn-sm" (click)="upvoteAnswer(question.id, answer.id)">
+                <i class="fa fa-thumbs-up"></i> {{ answer.upvotes }}
+              </button>
+              <button 
+                *ngIf="isQuestionOwner(question) && !answer.isAccepted" 
+                class="btn btn-success btn-sm"
+                (click)="acceptAnswer(question.id, answer.id)">
+                Accept
+              </button>
+              <span *ngIf="answer.isAccepted" class="accepted-badge">
+                <i class="fa fa-check"></i> Accepted
+              </span>
+            </div>
+          </div>
+          <div class="answer-content">
+            {{ answer.answer }}
+          </div>
+        </div>
+
+        <!-- Answer Input -->
+        <div class="answer-input">
+          <textarea 
+            #answerInput
+            (keypress)="onAnswerKeyPress($event, question.id, answerInput)"
+            rows="2" 
+            class="form-control answer-textarea" 
+            placeholder="Type your answer here... Press Enter to post"></textarea>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    <!-- ✅ Downloads Section -->
+    <div id="downloads" class="descriptions" style="padding-bottom: 5%;" *ngIf="activeTab === 'downloads' && (chapterlist | async) as chapters">
+      <div *ngFor="let chapter of chapters">
+        <div 
+          *ngIf="getFirstAvailableChapter(chapter) === 0" 
+          style="color: darkred; font-weight: bolder;">
+          Currently No Resources available for download. Please wait, the Instructor will be adding the Resources soon.
+        </div>
+
+        <div *ngIf="getFirstAvailableChapter(chapter) !== 0">
+          <strong>View and download your course related materials here ...</strong>
+          <div style="margin-top: 5%; margin-bottom: 5%;">
+            <button class="btn btn-warning btn-sm" style="margin-right: 5%;" (click)="openDoc()">View Material</button>
+            <button class="btn btn-success btn-sm" (click)="downloadPdf()">Download Resource</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ✅ Notes Section -->
+    <div id="notes" class="descriptions" style="padding-bottom: 5%;" *ngIf="activeTab === 'notes'">
+      <div style="display: inline-block; color: white; background-color: black; padding: 1.1%; border-radius: 5px;">
+        <i class="fa fa-search"></i>
+      </div>
+      <input class="form-control" id="searchtxt" type="text" placeholder="search course notes here...">
+      <strong (click)="toggleNotes()" style="cursor: pointer;">
+        Create new Note <i class="fa fa-plus-circle"></i>
+      </strong>
+      <textarea 
+        *ngIf="showNotesInput"
+        id="notestxt" 
+        rows="2" 
+        class="form-control" 
+        placeholder="add your new notes here...">
+      </textarea>
+      <br>
+      <strong *ngIf="!showNotesInput">
+        Click the "Create new note" or the "+" button to make your first note.
+      </strong>
+    </div>
+
+    <!-- ✅ Announcements Section -->
+    <div id="announcements" class="descriptions" style="padding: 10%;" *ngIf="activeTab === 'announcements'">
+      <strong style="font-size: 28px;">No announcements posted yet</strong>
+      <p>The instructor hasn't added any announcements to this course yet.</p>
+    </div>
+  </div>
+</div>
+
+<br><br>
+<app-footer></app-footer>

@@ -1,106 +1,231 @@
 <app-header></app-header>
 
-@if (showYoutubeCard()) {
-  <div id="youtubecoursecard" style="margin-left: 10%; margin-right: 10%; margin-top: 5%;">
-    <div class="headtext">Courses with YouTube Videos</div>
-
-    <!-- ✅ Render carousel only when there are courses -->
-    <owl-carousel-o *ngIf="youtubecourselist | async as youtubeList"
-                    [options]="owlOptions" 
-                    (dragging)="owlDragging($event)">
-      
-      <!-- ✅ Added trackBy to prevent duplicated key errors -->
-      <ng-container *ngFor="let course of (youtubecourselist | async); trackBy: trackByCourseId">
-        <ng-template carouselSlide>
-          <div class="course-card">
-            
-            <!-- ✅ YouTube thumbnail with fallback -->
-            <img [src]="getThumbnail(course.youtubeurl)"
-                 (error)="onImgError($event)"
-                 alt="Course Thumbnail"
-                 class="thumbnail">
-
-            <div class="course-info">
-              <h4>{{ course.coursename }}</h4>
-              <p>Instructor: {{ course.instructorname }}</p>
-              <p>Level: {{ course.skilllevel }}</p>
-            </div>
-
-            <div class="card-actions">
-              <button class="btn btn-primary" (click)="getcoursedetails(course.coursename)">
-                View Details
-              </button>
-              <button class="btn btn-outline-success" *ngIf="isNotLiked()" (click)="addToWishList(course)">
-                ❤️ Add to Wishlist
-              </button>
-            </div>
-
-          </div>
-        </ng-template>
-      </ng-container>
-    </owl-carousel-o>
-
-    <!-- ✅ Optional message when no courses are found -->
-    <div *ngIf="(youtubecourselist | async)?.length === 0" class="text-center text-muted mt-3">
-      No YouTube courses available.
+<!-- Loading State -->
+@if (isLoading()) {
+  <div class="loading-container">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading courses...</span>
     </div>
+    <p class="mt-2">Loading courses...</p>
   </div>
 }
 
-@if (showWebsiteCard()) {
-  <div id="websitecoursecard" class="course-section">
-    <div class="headtext">Courses with Website Content</div>
+<!-- Error State -->
+@if (hasError() && !isLoading()) {
+  <div class="error-container text-center" style="margin-top: 20%;">
+    <i class="fas fa-exclamation-triangle text-warning" style="font-size: 4rem;"></i>
+    <h3 class="mt-3">Failed to Load Courses</h3>
+    <p class="text-muted">{{errorMessage()}}</p>
+    @if (errorMessage() === 'User session not found. Please login again.') {
+      <button (click)="loginAgain()" class="btn btn-primary mt-3">
+        <i class="fas fa-sign-in-alt me-2"></i>Login Again
+      </button>
+    } @else {
+      <button (click)="reloadCourses()" class="btn btn-primary mt-3">
+        <i class="fas fa-redo me-2"></i>Try Again
+      </button>
+    }
+  </div>
+}
 
-    <owl-carousel-o [options]="owlOptions">
-      @for (data of (websitecourselist | async); track data.courseid) {
-        <ng-template carouselSlide>
-          <div class="card course-card" (click)="getcoursedetails(data.coursename)">
-            <img class="card-img-top" src="assets/img/websitebg.png" [alt]="data.courseid" />
-            <hr />
-            <h4 class="card-title text-center"><b>{{ data.coursename }}</b></h4>
-            <h6 class="course-id">{{ data.courseid }}</h6>
-            <div><b class="label">Instructor:</b> {{ data.instructorname }}</div>
-            <div><b class="label">Learners:</b> {{ data.enrolledcount }} enrolled previously</div>
-            <div><b class="label">Level:</b> {{ data.skilllevel }}</div>
-            <div><b class="label">Language:</b> {{ data.language }}</div>
-            <p class="desc">{{ data.description }}</p>
-            <button class="btn btn-primary" (click)="getcoursedetails(data.coursename)">More Info</button>
+<!-- Courses Content -->
+@if (!isLoading() && !hasError()) {
+  <!-- YouTube Courses - In Row Layout -->
+  @if (showYoutubeCard() && youtubecourselist.length > 0) {
+    <div class="course-container">
+      <div class="headtext">Courses with Youtube Videos</div>
+      <div class="course-grid">
+        @for (data of youtubecourselist; track data.courseid) {
+          <div class="course-card youtube-card">
+            <div class="youtube-container">
+              @if (data.youtubeurl) {
+                <youtube-player 
+                  [videoId]="getYouTubeId(data.youtubeurl)" 
+                  suggestedQuality="highres" 
+                  [height]="200" 
+                  [width]="300">
+                </youtube-player>
+              }
+            </div>
+            <div class="card-content">
+              <h4 class="card-title">{{data.coursename}}</h4>
+              <div class="course-id">{{data.courseid}}</div>
+              
+              <div class="course-info">
+                <span class="info-label">Instructor: </span>
+                <span class="info-value">{{data.instructorname}}</span>
+              </div>
+              
+              <div class="course-info">
+                <span class="info-label">Learners: </span>
+                <span class="info-value">{{data.enrolledcount}} enrolled previously</span>
+              </div>
+              
+              <div class="course-info">
+                <span class="info-label">Level: </span>
+                <span class="info-value">{{data.skilllevel}}</span>
+              </div>
+              
+              <div class="course-info">
+                <span class="info-label">Language: </span>
+                <span class="info-value">{{data.language}}</span>
+              </div>
+              
+              <p class="course-description">{{data.description}}</p>
+              
+              <div class="card-actions">
+                @if (isCourseEnrolled(data.coursename)) {
+                  <span class="badge bg-success enrolled-badge">Enrolled</span>
+                }
+                <a (click)="getcoursedetails(data.coursename)" class="btn btn-primary">More Info</a>
+              </div>
+            </div>
           </div>
-        </ng-template>
-      }
-    </owl-carousel-o>
-  </div>
-}
-@if (showCourseDetails()) {
-
-  @for (data of (courselist | async); track data.courseid) {
-    <div id="coursedetailscard" class="details-card">
-      <div class="card-body">
-        <h4 class="card-title text-center"><b>{{ data.coursename }}</b></h4>
-        <h6 class="course-id">{{ data.courseid }}</h6>
-        <div><b class="label">Instructor Name:</b> {{ data.instructorname }}</div>
-        <div><b class="label">Institution:</b> {{ data.instructorinstitution }}</div>
-        <div><b class="label">Learners:</b> {{ data.enrolledcount }}</div>
-        <div><b class="label">Level:</b> {{ data.skilllevel }}</div>
-        <div><b class="label">Language:</b> {{ data.language }}</div>
-        <p class="desc">{{ data.description }}</p>
-
-        @if (isNotEnrolled()) {
-          <button class="btn btn-primary" (click)="enrollcourse(data)">Enroll Now</button>
-        } @else {
-          <button class="btn btn-secondary">Enrolled</button>
         }
+      </div>
+    </div>
+  }
 
-        <button class="btn btn-primary" (click)="visitCourse(data.coursename)">Visit Course</button>
-        <button class="btn btn-primary" (click)="backToCourseList()">Back</button>
+  @if (showYoutubeCard() && youtubecourselist.length === 0) {
+    <div class="empty-state">
+      <h3>No YouTube courses available</h3>
+      <p>Check back later for new courses.</p>
+    </div>
+  }
 
-        @if (isNotLiked()) {
-          <button class="wishlist-btn" (click)="addToWishList(data)">
-            <i class="fa fa-heart-o fa-2x"></i> Like
+  <!-- Website Courses - In Row Layout -->
+  @if (showWebsiteCard() && websitecourselist.length > 0) {
+    <div class="course-container">
+      <div class="headtext">Courses with Website Content</div>
+      <div class="course-grid">
+        @for (data of websitecourselist; track data.courseid) {
+          <div class="course-card website-card">
+            <div class="card-content">
+              <img class="card-img-top" [src]="'assets/img/websitebg.png'" [alt]="data.courseid" style="height: 150px; object-fit: cover; border-radius: 8px; margin-bottom: 15px;">
+              
+              <h4 class="card-title">{{data.coursename}}</h4>
+              <div class="course-id">{{data.courseid}}</div>
+              
+              <div class="course-info">
+                <span class="info-label">Instructor: </span>
+                <span class="info-value">{{data.instructorname}}</span>
+              </div>
+              
+              <div class="course-info">
+                <span class="info-label">Learners: </span>
+                <span class="info-value">{{data.enrolledcount}} enrolled previously</span>
+              </div>
+              
+              <div class="course-info">
+                <span class="info-label">Level: </span>
+                <span class="info-value">{{data.skilllevel}}</span>
+              </div>
+              
+              <div class="course-info">
+                <span class="info-label">Language: </span>
+                <span class="info-value">{{data.language}}</span>
+              </div>
+              
+              <p class="course-description">{{data.description}}</p>
+              
+              <div class="card-actions">
+                @if (isCourseEnrolled(data.coursename)) {
+                  <span class="badge bg-success enrolled-badge" disabled style="width: 100px; margin-right: 5px;">Enrolled</span>
+                }
+                <a (click)="getcoursedetails(data.coursename)" class="btn btn-primary">More Info</a>
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  }
+
+  @if (showWebsiteCard() && websitecourselist.length === 0) {
+    <div class="empty-state">
+      <h3>No website courses available</h3>
+      <p>Check back later for new courses.</p>
+    </div>
+  }
+}
+
+<!-- Course Details -->
+@if (showCourseDetails()) {
+  @for (data of courselist; track data.courseid) {
+    <div class="course-details-card">
+      <h4 class="card-title text-center" style="font-size: 30px; margin-bottom: 20px;">{{data.coursename}}</h4>
+      <div class="course-id" style="margin-bottom: 25px;">{{data.courseid}}</div>
+      
+      <div class="detail-row">
+        <span class="detail-label">Instructor Name:</span>
+        <span class="detail-value">{{data.instructorname}}</span>
+      </div>
+      
+      <div class="detail-row">
+        <span class="detail-label">Instructor Institution:</span>
+        <span class="detail-value">{{data.instructorinstitution}}</span>
+      </div>
+      
+      <div class="detail-row">
+        <span class="detail-label">Enrolled Date:</span>
+        <span class="detail-value">{{data.enrolleddate}}</span>
+      </div>
+      
+      <div class="detail-row">
+        <span class="detail-label">Learners:</span>
+        <span class="detail-value">{{data.enrolledcount}} learners enrolled previously</span>
+      </div>
+      
+      <div class="detail-row">
+        <span class="detail-label">Course Type:</span>
+        <span class="detail-value">{{data.coursetype}} contents</span>
+      </div>
+      
+      <div class="detail-row">
+        <span class="detail-label">Level:</span>
+        <span class="detail-value">{{data.skilllevel}}</span>
+      </div>
+      
+      <div class="detail-row">
+        <span class="detail-label">Language:</span>
+        <span class="detail-value">{{data.language}}</span>
+      </div>
+      
+      <p class="course-description" style="margin-top: 20px; padding: 15px; background-color: #f8f9fa; border-radius: 8px;">{{data.description}}</p>
+      
+      <div class="action-buttons">
+        <!-- Enrollment Status -->
+        @if (!isEnrolled) {
+          @if (data.coursetype === 'Youtube') {
+            <button (click)="enrollcourse(data)" class="btn btn-primary">Enroll Now</button>
+          }
+        }
+        @if (isEnrolled) {
+          <button class="btn btn-secondary" disabled>Already Enrolled</button>
+        }
+        
+        <!-- Course Actions -->
+        @if (data.coursetype === 'Youtube') {
+          <a (click)="visitCourse(data.coursename)" class="btn btn-primary">Visit Course</a>
+        }
+        
+        @if (data.coursetype === 'Website') {
+          <a (click)="gotoURL(data.websiteurl)" class="btn btn-primary">Visit Course</a>
+        }
+        
+        <a (click)="backToCourseList()" class="btn btn-primary">Back to Courses</a>
+        
+        <!-- Wishlist Status -->
+        @if (!isLiked) {
+          <button (click)="addToWishList(data)" class="wishlist-btn">
+            <i class="far fa-heart fa-2x" style="color: red;"></i>
+            <span style="font-size: larger;">Add to Wishlist</span>
           </button>
-        } @else {
-          <button class="wishlist-btn liked">
-            <i class="fa fa-heart fa-2x"></i> Fav
+        }
+        @if (isLiked) {
+          <button class="wishlist-btn" style="cursor: default;">
+            <i class="fas fa-heart fa-2x" style="color: red;"></i>
+            <span style="font-size: larger;">In Wishlist</span>
           </button>
         }
       </div>
@@ -108,29 +233,5 @@
   }
 }
 
-@if (showEnrollSuccess()) {
-  <div id="enrollsuccess" class="enroll-success">
-    <div class="card-body">
-      <div class="success-banner">
-        <div class="check-icon">
-          <i class="fa fa-check"></i>
-        </div>
-        <div class="msg">Great choice, {{ loggedUser }}!</div>
-      </div>
-      <div class="jump">
-        <p>Jump right into the course</p>
-        <div class="course-preview">
-          <youtube-player [videoId]="enrolledURL" [height]="200" [width]="400"></youtube-player>
-          <div class="course-info">
-            <h4>{{ enrolledName }}</h4>
-            <h6 class="course-id">{{ enrolledID }}</h6>
-            <div><b>Instructor:</b> {{ enrolledInstructorName }}</div>
-            <button class="btn btn-primary" (click)="visitCourse(enrolledName)">Visit Course</button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-}
-
+<br>
 <app-footer></app-footer>

@@ -70,21 +70,23 @@ public class CourseController
         }
     }
 
-    // Get course by course name
-    @GetMapping("/courseByName/{coursename}")
-    public ResponseEntity<Course> getCourseByCoursename(@PathVariable String coursename) 
-    {
+    @GetMapping("/courselistbyname/{coursename}")
+    public ResponseEntity<?> getCourseListByName(@PathVariable String coursename) {
         try {
-            Course course = courseService.fetchCourseByCoursename(coursename);
-            if (course != null) {
-                return new ResponseEntity<>(course, HttpStatus.OK);
-            } else {
-                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            List<Course> courses = courseService.fetchCourseByCoursename(coursename);
+            if (courses == null || courses.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                                     .body("No course found for name: " + coursename);
             }
+            return ResponseEntity.ok(courses);
         } catch (Exception e) {
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                                 .body("Error fetching course: " + e.getMessage());
         }
     }
+
+    
 
     // Get course by course ID
     @GetMapping("/courseById/{courseid}")
